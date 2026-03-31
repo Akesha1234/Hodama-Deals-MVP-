@@ -1,0 +1,551 @@
+/* =======================================================
+   HODAMA DEALS — DESIGN PARITY FOOTER STYLES
+   ======================================================= */
+
+.ft-footer {
+    --ft-blue-bg: #111b5e;
+    /* Body background */
+    --ft-blue-light: #183bc6;
+    /* Newsletter background */
+    --ft-blue-darkest: #111833;
+    /* Copyright background */
+    --ft-yellow: #F7C204;
+    --ft-white: #E1E6FF;
+    --ft-white-60: rgba(255, 255, 255, 0.7);
+    --ft-white-30: rgba(255, 255, 255, 0.3);
+    --ft-white-15: rgba(255, 255, 255, 0.15);
+    --ft-transition: 0.25s ease;
+
+    background-color: var(--ft-blue-bg);
+    color: var(--ft-white-60);
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+/* ── Container ── */
+.ft-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 64px;
+    width: 100%;
+}
+
+/* ═══════════════════════════════════════════════
+   NEWSLETTER STRIP
+   ═══════════════════════════════════════════════ */
+.ft-newsletter {
+    background-color: var(--ft-blue-light);
+    height: 106px;
+    display: flex;
+    align-items: center;
+}
+
+.ft-newsletter__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    width: 100%;
+}
+
+.ft-newsletter__text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ft-newsletter__tag {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--ft-yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ft-newsletter__heading {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ft-white);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.ft-newsletter__form {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.ft-newsletter__input-group {
+    display: flex;
+    height: 48px;
+    width: 100%;
+    max-width: 520px;
+}
+
+.ft-newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: 1.5px solid var(--ft-white-60);
+    border-right: none;
+    border-radius: 50px 0 0 50px;
+    /* Pill shape */
+    padding: 0 24px;
+    font-size: 14px;
+    color: var(--ft-white);
+    outline: none;
+    transition: border-color var(--ft-transition);
+}
+
+.ft-newsletter__input::placeholder {
+    color: var(--ft-white-60);
+}
+
+.ft-newsletter__btn {
+    background-color: var(--ft-yellow);
+    color: #1D3182;
+    border: 1.5px solid var(--ft-white-60);
+    /* Border wraps the entire group */
+    border-left: none;
+    padding: 0 32px;
+    font-size: 14.5px;
+    font-weight: 800;
+    border-radius: 0 50px 50px 0;
+    /* Pill shape */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: opacity var(--ft-transition);
+}
+
+.ft-newsletter__btn:hover {
+    opacity: 0.9;
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN FOOTER BODY
+   ═══════════════════════════════════════════════ */
+.ft-body {
+    padding: 40px 40px;
+    background-color: #0C269F;
+}
+
+.ft-grid {
+    display: grid;
+    grid-template-columns: 320px 200px 260px 1fr;
+    gap: 48px;
+    align-items: start;
+}
+
+/* ── Columns ── */
+.ft-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Brand Section ── */
+.ft-logo-circle {
+    width: 68px;
+    height: 68px;
+    background: var(--ft-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.ft-logo {
+    width: 68px;
+    height: auto;
+    object-fit: contain;
+}
+
+.ft-brand-desc {
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-weight: 600;
+    color: #D3D8F0;
+    margin-bottom: 24px;
+}
+
+/* App Download */
+.ft-download {
+    margin-bottom: 24px;
+}
+
+.ft-download__title {
+    color: #ffffff;
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.ft-download__subtitle {
+    font-size: 12px;
+    color: var(--ft-white-60);
+    margin-bottom: 12px;
+}
+
+.ft-download__wrap {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.ft-qr-box {
+    background: var(--ft-white);
+    padding: 6px;
+    width: 76px;
+    height: 76px;
+}
+
+.ft-qr {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ft-app-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ft-app-img {
+    height: 34px;
+    width: auto;
+    display: block;
+}
+
+/* Social Icons */
+.ft-socials {
+    display: flex;
+    gap: 10px;
+}
+
+.ft-social-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--ft-white-30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ft-white-60);
+    text-decoration: none;
+    transition: all var(--ft-transition);
+}
+
+.ft-social-icon:hover {
+    background: var(--ft-yellow);
+    color: #000;
+    border-color: var(--ft-yellow);
+}
+
+/* ── Titles and Dividers ── */
+.ft-col-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ft-white);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.ft-col-title--icon {
+    gap: 10px;
+}
+
+.ft-col-icon {
+    color: var(--ft-yellow);
+}
+
+.ft-col-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--ft-white-15);
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.ft-col-divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 32px;
+    height: 2px;
+    background: var(--ft-yellow);
+    transform: translateY(-50%);
+}
+
+/* ── Link Lists ── */
+.ft-link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ft-link-list--mb {
+    margin-bottom: 24px;
+}
+
+.ft-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ft-white-60);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--ft-transition);
+}
+
+.ft-link__arrow,
+.ft-support-icon {
+    color: var(--ft-yellow);
+}
+
+.ft-link:hover {
+    color: var(--ft-white);
+}
+
+/* Sub-sections */
+.ft-sub-section--mt {
+    margin-top: 32px;
+}
+
+/* Contact Details */
+.ft-contact-box {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ft-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ft-white-60);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.ft-contact-item__icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--ft-white-30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ft-white-60);
+}
+
+/* ═══════════════════════════════════════════════
+   COPYRIGHT BAR
+   ═══════════════════════════════════════════════ */
+.ft-copyright {
+    background-color: #0D1A5F;
+    padding: 20px 0;
+}
+
+.ft-copyright__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.ft-copyright__text {
+    font-size: 13px;
+    color: var(--ft-white-60);
+    margin: 0;
+    font-weight: 600;
+}
+
+.ft-copyright__brand {
+    color: var(--ft-yellow);
+}
+
+.ft-copyright__links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ft-copyright__link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ft-white-60);
+    text-decoration: none;
+    transition: color var(--ft-transition);
+}
+
+.ft-copyright__link:hover {
+    color: var(--ft-white);
+}
+
+.ft-copyright__pipe {
+    color: var(--ft-white-30);
+    font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE DESIGN
+   ═══════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+    .ft-container {
+        padding: 0 40px;
+    }
+
+    .ft-grid {
+        grid-template-columns: 280px 180px 220px 1fr;
+        gap: 32px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .ft-container {
+        padding: 0 32px;
+    }
+
+    .ft-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px 32px;
+    }
+
+    .ft-newsletter__form {
+        max-width: 320px;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .ft-container {
+        padding: 0 24px;
+    }
+
+    .ft-newsletter {
+        padding: 24px 0;
+        height: auto;
+        /* Reset fixed height for mobile wrapping */
+    }
+
+    .ft-newsletter__inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .ft-newsletter__text {
+        align-items: center;
+    }
+
+    .ft-newsletter__form {
+        width: 100%;
+        max-width: 100%;
+        justify-content: center;
+    }
+
+    .ft-newsletter__input-group {
+        max-width: 100%;
+    }
+
+    .ft-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    /* Center Column 1 (Brand) on Mobile */
+    .ft-col--brand {
+        align-items: center;
+        text-align: center;
+    }
+
+    .ft-brand-desc {
+        text-align: center;
+        max-width: 90%;
+    }
+
+    .ft-download__wrap {
+        justify-content: center;
+    }
+
+    .ft-socials {
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    /* Keep the other lists slightly spaced and left-aligned for easy clicking */
+    .ft-col-title {
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+
+    .ft-link {
+        font-size: 14px;
+        padding: 6px 0;
+    }
+
+    .ft-contact-item {
+        font-size: 13.5px;
+    }
+
+    .ft-copyright__inner {
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .ft-copyright__links {
+        justify-content: center;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ft-container {
+        padding: 0 16px;
+    }
+
+    .ft-newsletter {
+        padding: 24px 0;
+        height: auto;
+    }
+
+    .ft-newsletter__btn {
+        padding: 0 16px;
+        font-size: 12.5px;
+        white-space: nowrap;
+    }
+
+    .ft-newsletter__heading {
+        font-size: 16px;
+    }
+
+    .ft-app-buttons {
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .ft-download__wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+}

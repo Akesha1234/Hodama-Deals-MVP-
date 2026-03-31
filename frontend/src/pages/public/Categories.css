@@ -1,0 +1,132 @@
+/* =======================================================
+   HODAMA DEALS — BROWSE CATEGORIES (FINAL DESIGN PARITY)
+   ======================================================= */
+
+.cat-page-full-wrap {
+    background-color: #f8fbff;
+    /* Matching csp-bg */
+    min-height: 100vh;
+    padding: 60px 0 100px;
+    font-family: 'Roboto';
+}
+
+.cat-container-max {
+    max-width: 1350px;
+    margin: 0 auto;
+}
+
+/* ── 1. HEADER HANDLED BY index.css ── */
+.premium-header-container {
+    margin-bottom: 40px;
+}
+
+/* ── 2. GRID LAYOUT ── */
+.cat-main-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 30px;
+    margin-bottom: 100px;
+}
+
+.mcat-loading {
+    grid-column: span 5;
+    text-align: center;
+    padding: 60px;
+    color: #323c82;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* ── 3. EXPLORE BANNER ── */
+.cat-bottom-explore-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 45px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 15px 45px rgba(12, 10, 10, 0.04);
+    border: 1.5px solid #f1f5f9;
+}
+
+.cat-explore-content h2 {
+    font-size: 32px;
+    font-weight: 900;
+    color: #323c82;
+    margin-bottom: 10px;
+}
+
+.cat-explore-content p {
+    font-size: 16px;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+}
+
+.cat-yellow-final-btn {
+    background: #ffc107;
+    color: #323c82;
+    border: none;
+    padding: 16px 45px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+}
+
+.cat-yellow-final-btn:hover {
+    background: #ffb300;
+    transform: translateX(8px);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1300px) {
+    .cat-main-grid-layout {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .cat-main-grid-layout {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cat-bottom-explore-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 35px;
+        padding: 40px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cat-main-grid-layout {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cat-h1-bold {
+        font-size: 28px;
+    }
+
+    .cat-title-badge-flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 500px) {
+    .cat-main-grid-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cat-container-max {
+        padding: 0 20px;
+    }
+}

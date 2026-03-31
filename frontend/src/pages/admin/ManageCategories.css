@@ -1,0 +1,441 @@
+/* ManageCategories.css — Admin Dashboard (Standardized with ManageClients) */
+
+.mcat-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    animation: fadeIn 0.5s ease-out;
+    background: transparent; /* Parent adlay-wrapper has background */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 1. Header ── */
+.mcat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.mcat-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #071356; /* Matching adlay-sidebar variable */
+    margin: 0;
+}
+
+.mcat-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.mcat-add-btn {
+    background: #1B3BFF;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(7, 19, 86, 0.2);
+}
+
+.mcat-add-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 16px rgba(7, 19, 86, 0.3);
+}
+
+/* ── 2. Stats & Search ── */
+.mcat-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+}
+
+.mcat-stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #e2e8f0;
+    min-width: 280px;
+}
+
+.mcat-stat-icon.blue {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3b82f6;
+    color: white;
+}
+
+.mcat-stat-info strong {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #071356;
+    line-height: 1;
+}
+
+.mcat-stat-info span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.mcat-search-area {
+    flex: 1;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    transition: 0.2s;
+    max-width: 500px;
+}
+
+.mcat-search-area:focus-within {
+    border-color: #1B3BFF;
+}
+
+.mcat-search-area input {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+/* ── 3. Table ── */
+.mcat-table-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.mcat-table-wrap {
+    overflow-x: auto;
+}
+
+.mcat-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mcat-table th {
+    background: #f8fafc;
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.mcat-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.mcat-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mcat-img-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #eff6ff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mcat-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mcat-name {
+    display: block;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.mcat-slug {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.mcat-status-pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mcat-status-pill.active {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.mcat-status-pill.inactive {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.mcat-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.mcat-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.mcat-icon-btn.edit:hover { background: #e0e7ff; color: #1B3BFF; }
+.mcat-icon-btn.delete:hover { background: #fee2e2; color: #ef4444; }
+
+/* ── 4. Modal Optimization (Horizontal Layout) ── */
+.mcat-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 19, 86, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.mcat-modal-container {
+    background: #fff;
+    width: 90%;
+    max-width: 950px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.25);
+    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.mcat-modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mcat-mh-left {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.mcat-icon-circle {
+    width: 44px;
+    height: 44px;
+    background: #eff6ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mcat-mh-left h3 { margin: 0; font-size: 1.25rem; font-weight: 800; color: #071356; }
+.mcat-mh-left p { margin: 2px 0 0; font-size: 0.85rem; color: #64748b; }
+
+.mcat-modal-body-flex {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+}
+
+.mcat-form-main-fields {
+    padding: 32px;
+    border-right: 1px solid #f1f5f9;
+}
+
+.mcat-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.mcat-form-group.span-2 { grid-column: span 2; }
+
+.mcat-form-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #071356;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.mcat-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mcat-input-wrap svg {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+}
+
+.mcat-input-wrap input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.mcat-input-wrap input:focus { border-color: #1B3BFF; background: #f8fbff; }
+
+.mcat-color-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1.5px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 12px;
+}
+
+.mcat-color-input-wrap input[type="color"] {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    background: none;
+}
+
+.mcat-color-label { font-weight: 700; font-family: monospace; font-size: 0.9rem; color: #1e293b; }
+
+.mcat-toggle-wrap { display: flex; align-items: center; gap: 12px; padding: 5px 0; }
+.mcat-toggle-btn {
+    width: 44px; height: 24px; background: #e2e8f0; border-radius: 20px;
+    position: relative; cursor: pointer; border: none; transition: 0.3s;
+}
+.mcat-toggle-btn.active { background: #16a34a; }
+.mcat-toggle-thumb {
+    width: 18px; height: 18px; background: #fff; border-radius: 50%;
+    position: absolute; top: 3px; left: 3px; transition: 0.3s;
+}
+.mcat-toggle-btn.active .mcat-toggle-thumb { transform: translateX(20px); }
+
+/* ── Preview Panel ── */
+.mcat-modal-preview-panel {
+    background: #f8fafc;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mcat-preview-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mcat-preview-section h4 {
+    margin: 0 0 20px 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mcat-preview-box {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.mcat-preview-hint { font-size: 0.8rem; color: #94a3b8; font-weight: 500; text-align: center; }
+
+.mcat-modal-footer {
+    padding: 20px 32px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: #fff;
+}
+
+.mcat-btn-cancel {
+    background: #f1f5f9; border: none; padding: 10px 24px; border-radius: 10px;
+    font-weight: 700; color: #64748b; cursor: pointer;
+}
+
+.mcat-btn-save {
+    background: #1B3BFF; color: white; border: none; padding: 10px 30px;
+    border-radius: 10px; font-weight: 700; cursor: pointer;
+}
+
+.mcat-close-btn { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 5px; }
+.mcat-close-btn:hover { color: #ef4444; }
+
+.text-right { text-align: right; }

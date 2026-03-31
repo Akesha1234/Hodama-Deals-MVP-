@@ -1,0 +1,745 @@
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f1f5f9;
+    /* LIGHT GRAY BACKGROUND */
+    font-family: 'Inter', sans-serif;
+    padding: 60px 20px;
+}
+
+/* Central Registration Card */
+.register-card-modern {
+    width: 100%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 4px;
+    /* Minimal rounding like in image */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    /* Soft shadow for the card */
+    position: relative;
+    overflow: hidden;
+    /* To clip content to card boundaries */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Banner Styles (Now inside the card) */
+.register-top-banner {
+    width: 100%;
+    height: 15px;
+    position: relative;
+    z-index: 10;
+}
+
+.yellow-strip {
+    height: 100%;
+    width: 100%;
+    background-color: #facc15;
+    /* Bright yellow from image */
+}
+
+.blue-triangle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 60px 120px 0 0;
+    /* Creates the slanted blue shape */
+    border-color: #2563eb transparent transparent transparent;
+    z-index: 11;
+}
+
+.register-content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 40px;
+}
+
+/* Step Indicator Modern */
+.step-indicator-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.step-text-main {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2563eb;
+    /* Blue part */
+}
+
+.step-title-description {
+    font-size: 24px;
+    font-weight: 700;
+    color: #64748b;
+    /* Gray part */
+}
+
+.step-progress-bar-container {
+    width: 100%;
+    max-width: 800px;
+    height: 5px;
+    background-color: #e2e8f0;
+    /* Gray base */
+    margin-bottom: 60px;
+    position: relative;
+    border-radius: 10px;
+}
+
+.step-progress-fill-active {
+    height: 100%;
+    background-color: #2563eb;
+    /* Blue progress */
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards Design */
+.role-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.role-select-card-new {
+    background-color: white;
+    border: 3px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    overflow: visible;
+    /* To allow checkmark to pop if needed, or keep hidden */
+}
+
+.role-select-card-new:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+.role-select-card-new.selected {
+    border: 4px solid;
+    border-image: linear-gradient(to right, #1339E4, #F7C204) 1;
+    /* YELLOW BORDER for selection */
+    box-shadow: 0 20px 35px -10px rgba(250, 204, 21, 0.15);
+}
+
+.checkmark-badge-custom {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+    /* More pronounced shadow */
+    display: flex;
+}
+
+.card-image-main {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+}
+
+.role-full-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Since images are full cards */
+    display: block;
+}
+
+.continue-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.continue-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #F7C204;
+    color: #1D3182;
+    padding: 14px 40px;
+    border-radius: 6px;
+    border: none;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.continue-btn:hover {
+    background-color: #ebd26f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Step 2 Redesign */
+.step-2-container-new {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.form-header-modern {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+    position: relative;
+    padding-top: 20px;
+}
+
+.back-btn-circle {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s;
+}
+
+.back-btn-circle:hover {
+    transform: scale(1.1);
+}
+
+.form-main-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1D3182;
+    margin-bottom: 8px;
+}
+
+.form-sub-title {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+.register-form-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row-modern {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.input-block-labeled {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-block-labeled label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    /* Dark gray labels */
+}
+
+.reg-input-new {
+    width: 100%;
+    padding: 16px 20px;
+    background-color: #f3f7ff;
+    /* VERY LIGHT BLUE BACKGROUND */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #1e293b;
+    transition: all 0.2s;
+}
+
+.reg-input-new:focus {
+    background-color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.select-custom-arrow {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231D3182" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 20px;
+    padding-right: 50px;
+}
+
+.pass-input-wrapper-new {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pass-toggle-modern {
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+}
+
+/* Mock Captcha */
+.mock-captcha-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.checkbox-mock {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.checkbox-mock input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.checkbox-mock label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+}
+
+/* Terms Check Group */
+.terms-check-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.check-row-modern {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.check-row-modern input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.check-row-modern label {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.check-row-modern a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.check-row-modern a:hover {
+    text-decoration: underline;
+}
+
+.create-account-btn-major {
+    width: 100%;
+    padding: 18px;
+    background-color: #1339E5;
+    /* DEEP BLUE BUTTON */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(29, 49, 130, 0.2);
+}
+
+.create-account-btn-major:hover {
+    background-color: #152461;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(29, 49, 130, 0.3);
+}
+
+.form-footer-modern-alt {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+    text-align: center;
+}
+
+.form-footer-modern-alt p {
+    font-size: 16px;
+    color: #64748b;
+}
+
+.login-link-bold {
+    color: #1339E5;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.login-link-bold:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .form-row-modern {
+        grid-template-columns: 1fr;
+    }
+
+    .back-btn-circle {
+        position: static;
+        margin-bottom: 20px;
+    }
+}
+
+/* Step 2 Form */
+.step-2-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: transparent;
+    /* Keep it clean without extra card wrapper if referring to image perfectly, or add one */
+}
+
+.form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    left: -40px;
+    top: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    padding: 5px;
+}
+
+.back-btn:hover {
+    color: #1e293b;
+}
+
+.form-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.promo-banner-reg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    padding: 10px 20px;
+    border-radius: 50px;
+    color: #1e40af;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.promo-banner-reg strong {
+    color: #f59e0b;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.reg-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #1e293b;
+    background-color: white;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+.reg-input::placeholder {
+    color: #94a3b8;
+}
+
+.reg-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.reg-input.error-border {
+    border-color: #ef4444;
+}
+
+.error-text {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+.pass-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pass-toggle {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+}
+
+.pass-strength-indicator {
+    height: 4px;
+    background-color: #f1f5f9;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-bar.weak {
+    width: 33%;
+    background-color: #ef4444;
+}
+
+.strength-bar.medium {
+    width: 66%;
+    background-color: #f59e0b;
+}
+
+.strength-bar.strong {
+    width: 100%;
+    background-color: #22c55e;
+}
+
+.terms-check-modern {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.modern-checkbox {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    margin-top: 2px;
+    cursor: pointer;
+    position: relative;
+    background-color: white;
+    flex-shrink: 0;
+}
+
+.modern-checkbox:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.modern-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-wrapper label {
+    font-size: 14px;
+    color: #475569;
+    cursor: pointer;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.subscription-hint {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 4px;
+    margin-left: 30px;
+    font-style: italic;
+}
+
+.submit-btn-modern {
+    width: 100%;
+    padding: 16px;
+    background-color: #f59e0b;
+    /* Orange/Yellow as in image */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.submit-btn-modern:hover {
+    background-color: #d97706;
+}
+
+.submit-btn-modern:disabled {
+    background-color: #fcd34d;
+    cursor: not-allowed;
+}
+
+.reg-message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.reg-message.error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.reg-message.success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+}
+
+.reg-footer-modern {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.login-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+/* Loader */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .role-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .back-btn {
+        position: static;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,864 @@
+/* ManageUsers.css - Unique prefix amu- to avoid conflicts */
+
+.amu-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 1. Header */
+.amu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.amu-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--adlay-sidebar);
+    margin: 0;
+}
+
+.amu-subtitle {
+    color: var(--adlay-text-muted);
+    font-size: 1rem;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.amu-header-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.amu-add-btn {
+    background: var(--adlay-primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(7, 19, 86, 0.2);
+}
+
+.amu-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(7, 19, 86, 0.3);
+    filter: brightness(1.1);
+}
+
+.amu-quick-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.amu-qs-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.amu-qs-val {
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.amu-qs-lbl {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--adlay-text-muted);
+    text-transform: uppercase;
+}
+
+.amu-qs-val.text-green {
+    color: #16a34a;
+}
+
+.amu-qs-val.text-red {
+    color: #ef4444;
+}
+
+/* 2. Summary Cards */
+.amu-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.amu-stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid var(--adlay-border);
+}
+
+.amu-stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.amu-stat-icon.bg-blue {
+    background: #3b82f6;
+}
+
+.amu-stat-icon.bg-green {
+    background: #10b981;
+}
+
+.amu-stat-icon.bg-red {
+    background: #ef4444;
+}
+
+.amu-stat-icon.bg-yellow {
+    background: #f59e0b;
+}
+
+.amu-stat-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--adlay-sidebar);
+    line-height: 1;
+}
+
+.amu-stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--adlay-text-muted);
+}
+
+/* 3 & 4. Search & Filters */
+.amu-controls-card {
+    background: white;
+    padding: 20px 24px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--adlay-border);
+    gap: 24px;
+}
+
+.amu-search-box {
+    flex: 1;
+    background: #f8fafc;
+    border: 1.5px solid var(--adlay-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+}
+
+.amu-search-box input {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.amu-filters {
+    display: flex;
+    gap: 16px;
+}
+
+.amu-filter-item {
+    background: #f8fafc;
+    border: 1.5px solid var(--adlay-border);
+    border-radius: 12px;
+    padding: 5px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--adlay-text-muted);
+}
+
+.amu-filter-item select {
+    background: none;
+    border: none;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--adlay-text);
+    outline: none;
+    cursor: pointer;
+}
+
+/* 5. Table Styling */
+.amu-table-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid var(--adlay-border);
+    overflow: hidden;
+}
+
+.amu-table-container {
+    overflow-x: auto;
+}
+
+.amu-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.amu-table th {
+    background: #f8fafc;
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--adlay-text-muted);
+    border-bottom: 2px solid var(--adlay-border);
+}
+
+.amu-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+}
+
+.amu-td-id {
+    font-weight: 800;
+    color: var(--adlay-primary);
+}
+
+.amu-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.amu-user-avatar {
+    width: 40px;
+    height: 40px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+}
+
+.amu-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.amu-user-name {
+    font-weight: 700;
+    color: var(--adlay-text);
+}
+
+.amu-user-email {
+    font-size: 0.8rem;
+    color: var(--adlay-text-muted);
+}
+
+.amu-status-pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+}
+
+.amu-status-pill.active {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.amu-status-pill.blocked {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.amu-status-pill.resolved {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.amu-status-pill.pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.amu-role-tag {
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-flex;
+}
+
+.amu-role-tag.buyer {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.amu-role-tag.client {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.amu-role-tag.driver {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.amu-role-tag.admin {
+    background: #faf5ff;
+    color: #9333ea;
+}
+
+.amu-table-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.amu-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: #f1f5f9;
+    color: var(--adlay-text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.amu-btn-icon:hover {
+    background: #e2e8f0;
+    color: var(--adlay-text);
+}
+
+.amu-btn-icon.secondary:hover {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.amu-btn-icon.danger:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.amu-btn-icon.warn:hover {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.amu-btn-icon.success:hover {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* 9. Pagination */
+.amu-pagination {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.amu-pager-info {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--adlay-text-muted);
+}
+
+.amu-pager-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.amu-pager-nav,
+.amu-pager-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--adlay-border);
+    background: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.amu-pager-num.active {
+    background: var(--adlay-primary);
+    color: white;
+    border-color: var(--adlay-primary);
+}
+
+.amu-pager-nav.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 8. User Details Modal */
+.amu-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 19, 86, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.amu-modal-content {
+    width: 95%;
+    max-width: 1100px;
+    background: #f8fbff;
+    max-height: 90vh;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: amuModalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes amuModalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.amu-modal-header {
+    background: white;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--adlay-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Form Modal Styles */
+.amu-form-modal {
+    background: white;
+    width: 100%;
+    max-width: 650px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+
+.amu-form-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--adlay-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.amu-form-header h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--adlay-sidebar);
+    margin: 0;
+}
+
+.amu-close-modal {
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.amu-close-modal:hover {
+    background: #e2e8f0;
+}
+
+.amu-user-form {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.amu-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.amu-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.amu-form-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--adlay-sidebar);
+}
+
+.amu-form-group input,
+.amu-form-group select {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--adlay-border);
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.amu-form-group input:focus,
+.amu-form-group select:focus {
+    border-color: var(--adlay-primary);
+    background: #f8fbff;
+}
+
+.amu-form-footer {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.amu-btn-cancel {
+    background: #f1f5f9;
+    color: var(--adlay-text);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.amu-btn-save {
+    background: var(--adlay-primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: var(--adlay-text-muted);
+    font-style: italic;
+}
+
+.amu-profile-tags {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.amu-btn-action.btn-edit {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.amu-btn-action.btn-edit:hover {
+    background: #dbeafe;
+}
+
+.amu-btn-back {
+    background: none;
+    border: none;
+    color: var(--adlay-text);
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.amu-header-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.amu-btn-action {
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.amu-btn-action.btn-block {
+    background: #ef4444;
+    color: white;
+}
+
+.amu-btn-action.btn-unblock {
+    background: #16a34a;
+    color: white;
+}
+
+.amu-btn-action.btn-delete {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.amu-modal-body {
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.amu-details-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+}
+
+.amu-profile-card {
+    background: white;
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid var(--adlay-border);
+    box-shadow: var(--adlay-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.amu-profile-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.amu-profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: #eff6ff;
+    color: var(--adlay-primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.amu-profile-main h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--adlay-sidebar);
+    margin: 0 0 8px 0;
+}
+
+.amu-profile-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.amu-p-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.amu-p-item svg {
+    color: var(--adlay-primary);
+}
+
+.amu-p-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.amu-p-text span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--adlay-text-muted);
+    text-transform: uppercase;
+}
+
+.amu-p-text strong {
+    font-size: 0.9rem;
+    color: var(--adlay-text);
+}
+
+.amu-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.amu-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.amu-span-2 {
+    grid-column: span 2;
+}
+
+.amu-details-section {
+    background: white;
+    padding: 24px;
+    border-radius: 24px;
+    border: 1px solid var(--adlay-border);
+    box-shadow: var(--adlay-shadow);
+}
+
+.amu-section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--adlay-sidebar);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 15px;
+}
+
+.amu-mini-table-container {
+    overflow-x: auto;
+}
+
+.amu-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.amu-mini-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--adlay-text-muted);
+    padding: 12px 10px;
+}
+
+.amu-mini-table td {
+    padding: 12px 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.amu-status-mini {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.amu-status-mini.delivered {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.amu-status-mini.processing {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.amu-status-mini.approved {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.amu-val-bold {
+    font-weight: 700;
+}
+
+.text-right {
+    text-align: right;
+}
+
+@media (max-width: 1200px) {
+    .amu-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .amu-modal-content {
+        width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    .amu-summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .amu-controls-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .amu-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .amu-span-2 {
+        grid-column: span 1;
+    }
+}

@@ -1,0 +1,520 @@
+/* HelpCenter.css - Unique class names with csp- prefix to avoid conflicts */
+
+:root {
+    --csp-primary: #1B3BFF;
+    --csp-primary-light: #eff6ff;
+    --csp-secondary: #071356;
+    --csp-accent: #f8c205;
+    --csp-text: #3D3D41;
+    --csp-text-muted: #64748b;
+    --csp-bg: #f8fbff;
+    --csp-card-bg: #ffffff;
+    --csp-border: rgba(204, 210, 218, 0.8);
+    --csp-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --csp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.csp-page-wrapper {
+    background-color: var(--csp-bg);
+    min-height: 100vh;
+    padding: 60px 0 100px;
+    font-family: 'Roboto';
+    color: var(--csp-text);
+}
+
+.csp-container {
+    max-width: 1350px;
+    margin: 0 auto;
+}
+
+
+
+/* ── 3. Quick Help Cards ── */
+.csp-quick-help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-bottom: 50px;
+}
+
+.csp-help-card {
+    background: var(--csp-card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--csp-border);
+    box-shadow: var(--csp-shadow);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.csp-help-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--csp-shadow-lg);
+    border-color: var(--csp-primary);
+}
+
+.csp-card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--csp-primary);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: 0.3s;
+}
+
+.csp-help-card:hover .csp-card-icon {
+    background: var(--csp-primary);
+    color: white;
+}
+
+.csp-card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--csp-secondary);
+    margin-bottom: 10px;
+}
+
+.csp-card-desc {
+    font-size: 0.9rem;
+    color: var(--csp-text-muted);
+    line-height: 1.5;
+}
+
+/* ── 4. Search Help ── */
+.csp-search-section {
+    max-width: 700px;
+    margin: 0 auto 60px;
+}
+
+.csp-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid var(--csp-border);
+    border-radius: 10px;
+    padding: 5px 5px 5px 20px;
+    box-shadow: var(--csp-shadow);
+    transition: 0.3s;
+}
+
+.csp-search-bar:focus-within {
+    border-color: var(--csp-primary);
+    box-shadow: 0 0 0 4px rgba(20, 58, 230, 0.1);
+}
+
+.csp-search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.csp-search-btn {
+    background: var(--csp-primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.csp-search-btn:hover {
+    background: #102bc4;
+}
+
+/* ── 5. Contact Support Form ── */
+.csp-form-section {
+    margin-bottom: 60px;
+}
+
+.csp-section-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.csp-section-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #323C82;
+}
+
+.csp-form-card {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid var(--csp-border);
+    box-shadow: var(--csp-shadow);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.csp-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.csp-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.csp-span-2 {
+    grid-column: span 2;
+}
+
+.csp-form-group label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--csp-text);
+}
+
+.csp-form-group input,
+.csp-form-group select,
+.csp-form-group textarea {
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--csp-border);
+    background: #e0e5f57e;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: 0.2s;
+}
+
+.csp-form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 44px;
+}
+
+.csp-form-error {
+    color: #e11d48;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: -4px;
+}
+
+.csp-form-group input:focus,
+.csp-form-group select:focus,
+.csp-form-group textarea:focus {
+    outline: none;
+    border-color: var(--csp-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(20, 58, 230, 0.08);
+}
+
+.csp-form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* File Upload */
+.csp-file-upload-wrapper {
+    margin-top: 10px;
+}
+
+.csp-file-trigger {
+    border: 2px dashed var(--csp-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: #e0e5f57e;
+    transition: 0.2s;
+}
+
+.csp-file-trigger:hover {
+    border-color: var(--csp-primary);
+    background: var(--csp-primary-light);
+}
+
+.csp-file-trigger span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--csp-text-muted);
+}
+
+.csp-submit-btn {
+    background: var(--csp-primary);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(20, 58, 230, 0.2);
+}
+
+.csp-submit-btn:hover {
+    background: #102bc4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(20, 58, 230, 0.3);
+}
+
+.csp-success-message {
+    background: #f0fdf4;
+    border: 1px solid #16a34a;
+    color: #166534;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 700;
+}
+
+/* ── 6. Support Ticket Status ── */
+.csp-tickets-section {
+    margin-bottom: 60px;
+}
+
+.csp-tickets-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid var(--csp-border);
+    box-shadow: var(--csp-shadow);
+    overflow: hidden;
+}
+
+.csp-tickets-table-wrapper {
+    overflow-x: auto;
+}
+
+.csp-tickets-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.csp-tickets-table th {
+    background: #f8fafc;
+    padding: 16px 24px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #7A84A2;
+    text-transform: uppercase;
+    text-align: left;
+    border-bottom: 1.5px solid var(--csp-border);
+}
+
+.csp-tickets-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+}
+
+.csp-ticket-id {
+    font-weight: 700;
+    color: var(--csp-primary);
+}
+
+.csp-status-pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.csp-status-pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.csp-status-progress {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.csp-status-resolved {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+/* ── 7. Contact Options ── */
+.csp-contact-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.csp-contact-card {
+    background: white;
+    padding: 24px 30px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid var(--csp-border);
+    box-shadow: var(--csp-shadow);
+    transition: 0.3s;
+}
+
+.csp-contact-card:hover {
+    border-color: var(--csp-primary);
+}
+
+.csp-contact-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--csp-primary-light);
+    color: var(--csp-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.csp-contact-info p {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--csp-text-muted);
+    margin: 0;
+}
+
+.csp-contact-info h4 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--csp-secondary);
+    margin: 4px 0 0 0;
+}
+
+/* ── 8. FAQ Section ── */
+.csp-faq-section {
+    margin-bottom: 60px;
+}
+
+.csp-faq-list {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #1D3182;
+}
+
+.csp-faq-item {
+    background: white;
+    border: 1.5px solid var(--csp-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.csp-faq-item[open] {
+    border-color: var(--csp-primary);
+
+}
+
+.csp-faq-summary {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 700;
+    color: #1D3182;
+    list-style: none;
+}
+
+.csp-faq-summary::-webkit-details-marker {
+    display: none;
+}
+
+.csp-faq-content {
+    padding: 0 24px 24px;
+    color: var(--csp-text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* ── 9. Help Links ── */
+.csp-links-section {
+    background: var(--csp-secondary);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.csp-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    text-align: center;
+}
+
+.csp-link-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: white;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.csp-link-item:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+}
+
+.csp-link-item span {
+    font-weight: 700;
+}
+
+/* ── 10. Footer Note ── */
+.csp-footer-note {
+    text-align: center;
+    color: var(--csp-text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ── Mobile Layout ── */
+@media (max-width: 768px) {
+    .csp-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .csp-span-2 {
+        grid-column: span 1;
+    }
+
+    .csp-header-title {
+        font-size: 1.8rem;
+    }
+
+    .csp-form-card {
+        padding: 24px;
+    }
+
+    .csp-quick-help-grid {
+        grid-template-columns: 1fr;
+    }
+}

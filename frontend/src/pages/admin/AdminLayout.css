@@ -1,0 +1,410 @@
+/* AdminLayout.css - Unique prefix adlay- to avoid conflicts */
+
+:root {
+    --adlay-bg: #f5f7fb;
+    --adlay-sidebar: #071356;
+    --adlay-primary: #143ae6;
+    --adlay-accent: #f8c205;
+    --adlay-text: #1e293b;
+    --adlay-text-muted: #64748b;
+    --adlay-white: #ffffff;
+    --adlay-border: #e2e8f0;
+    --adlay-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --adlay-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.adlay-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: var(--adlay-bg);
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Sidebar Styling */
+.adlay-sidebar {
+    width: 280px;
+    background: var(--adlay-sidebar);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.sidebar-collapsed .adlay-sidebar {
+    width: 80px;
+}
+
+/* Sidebar Logo */
+.adlay-logo-container {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.adlay-logo {
+    width: 40px;
+}
+
+.adlay-logo-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.sidebar-collapsed .adlay-logo-text {
+    display: none;
+}
+
+/* Navigation Links */
+.adlay-nav {
+    flex: 1;
+    padding: 24px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.adlay-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.adlay-nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.adlay-nav-link.active {
+    background: var(--adlay-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(20, 58, 230, 0.2);
+}
+
+.sidebar-collapsed .adlay-nav-name {
+    display: none;
+}
+
+/* Sub-menu Styling */
+.adlay-nav-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.adlay-menu-parent {
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    justify-content: flex-start;
+}
+
+.adlay-menu-arrow {
+    margin-left: auto;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+
+.adlay-menu-parent.expanded .adlay-menu-arrow {
+    opacity: 1;
+}
+
+.adlay-sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0, 1, 0, 1);
+    display: flex;
+    flex-direction: column;
+    padding-left: 20px;
+    gap: 4px;
+}
+
+.adlay-sub-menu.open {
+    max-height: 1000px;
+    transition: all 0.3s cubic-bezier(1, 0, 1, 0);
+    padding-top: 4px;
+    padding-bottom: 8px;
+}
+
+.adlay-sub-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.adlay-sub-nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.adlay-sub-nav-link.active {
+    color: var(--adlay-accent);
+    background: rgba(248, 194, 5, 0.1);
+}
+
+.sidebar-collapsed .adlay-sub-menu {
+    display: none;
+}
+
+.sidebar-collapsed .adlay-menu-arrow {
+    display: none;
+}
+
+.adlay-logout {
+    border: none;
+    background: none;
+    width: 100%;
+    margin-top: auto;
+    color: #fca5a5;
+    cursor: pointer;
+}
+
+.adlay-logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Main Content Area */
+.adlay-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Navbar */
+.adlay-navbar {
+    height: 80px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--adlay-border);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    box-shadow: var(--adlay-shadow);
+}
+
+.adlay-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.adlay-menu-toggle {
+    background: none;
+    border: none;
+    color: var(--adlay-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.adlay-search-box {
+    background: #f1f5f9;
+    border: 1px solid var(--adlay-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    width: 400px;
+    transition: all 0.2s;
+}
+
+.adlay-search-box:focus-within {
+    background: white;
+    border-color: var(--adlay-primary);
+    box-shadow: 0 0 0 4px rgba(20, 58, 230, 0.05);
+}
+
+.adlay-search-box input {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    flex: 1;
+    font-size: 0.9rem;
+    outline: none;
+    color: var(--adlay-text);
+}
+
+/* Navbar Right */
+.adlay-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.adlay-nav-btn {
+    background: #f1f5f9;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--adlay-text);
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+}
+
+.adlay-nav-btn:hover {
+    background: #e2e8f0;
+}
+
+.adlay-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+}
+
+.adlay-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 24px;
+    border-left: 1px solid var(--adlay-border);
+}
+
+.adlay-user-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.adlay-user-name {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--adlay-text);
+}
+
+.adlay-user-role {
+    font-size: 0.75rem;
+    color: var(--adlay-text-muted);
+    font-weight: 600;
+}
+
+.adlay-user-avatar {
+    width: 44px;
+    height: 44px;
+    background: var(--adlay-primary);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(20, 58, 230, 0.2);
+}
+
+/* Main Content Body */
+.adlay-content-body {
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Global Animation Utilities */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Modal Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (max-width: 1024px) {
+    .adlay-sidebar {
+        display: none;
+    }
+
+    .adlay-navbar {
+        padding: 0 20px;
+    }
+
+    .adlay-search-box {
+        width: auto;
+    }
+
+    .adlay-search-box input {
+        display: none;
+    }
+}

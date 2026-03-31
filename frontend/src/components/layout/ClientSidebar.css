@@ -1,0 +1,141 @@
+.client-sidebar-new {
+    width: 260px;
+    height: 100vh;
+    background-color: #070d30; /* Darker navy from image */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    position: relative;
+}
+
+.client-sidebar-new.collapsed {
+    width: 80px;
+}
+
+.sidebar-header-new {
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.brand-logo-circle {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 10px;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.brand-logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sidebar-header-new::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nav-new {
+    flex: 1;
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav-item-new {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: #e2e8f0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    text-align: left;
+}
+
+.nav-item-new:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item-new.active {
+    background-color: #2563eb; /* Vibrant blue from image */
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.nav-icon {
+    flex-shrink: 0;
+}
+
+.client-sidebar-new.collapsed .nav-item-new span {
+    display: none;
+}
+
+.client-sidebar-new.collapsed .brand-logo-circle {
+    width: 50px;
+    height: 50px;
+}
+
+.sidebar-footer-new {
+    padding: 30px 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.logout-item, .home-item {
+    padding: 12px 20px;
+}
+
+.sidebar-mobile-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .client-sidebar-new {
+        position: fixed;
+        left: -260px;
+    }
+    
+    .client-sidebar-new.expanded {
+        left: 0;
+    }
+    
+    .sidebar-mobile-close {
+        display: block;
+    }
+}

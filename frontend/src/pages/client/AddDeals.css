@@ -1,0 +1,485 @@
+/* AddProduct.css inherits global dashboard styles from ClientDashboard.css */
+
+.ap-scroll-container {
+    background-color: var(--dash-bg);
+    min-height: 100vh;
+}
+
+.ap-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ── Sidebar & Logo Styles ── */
+.sidebar-header {
+    height: 280px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #071356;
+    overflow: hidden;
+    /* Prevent spill-over */
+    transition: all 0.3s ease;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.dashboard-img-logo {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transform: scale(1.8);
+    transition: transform 0.3s ease;
+    filter: none !important;
+    background: transparent !important;
+    pointer-events: none;
+}
+
+/* Specific styles for Collapsed Sidebar */
+.dashboard-sidebar.collapsed .sidebar-header {
+    height: 80px;
+    padding: 5px;
+}
+
+.dashboard-sidebar.collapsed .dashboard-img-logo {
+    transform: scale(1.1) !important;
+    /* Scale down when collapsed */
+    width: 50px;
+    height: 50px;
+}
+
+/* Force state even if parent is hovered but keep it contained */
+.dashboard-sidebar.expanded .sidebar-header:hover .dashboard-img-logo {
+    transform: scale(1.8) !important;
+}
+
+/* ── 1. Breadcrumb ── */
+.ap-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dash-text-muted);
+    margin-bottom: 24px;
+}
+
+.ap-breadcrumb span:first-child {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.ap-breadcrumb span:first-child:hover {
+    color: var(--dash-primary);
+}
+
+.ap-breadcrumb .current {
+    color: var(--dash-text);
+    font-weight: 800;
+}
+
+/* ── 2. Page Header ── */
+.ap-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+
+.ap-page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--dash-sidebar);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.ap-page-header p {
+    color: var(--dash-text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.ap-instructions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #eff6ff;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dash-primary-dark);
+}
+
+/* ── 3. Layout Grid ── */
+.ap-grid-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* ── Section Cards ── */
+.ap-section-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid var(--dash-border);
+    box-shadow: var(--dash-shadow);
+    margin-bottom: 24px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: var(--dash-sidebar);
+}
+
+.section-title h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+/* ── Form Elements ── */
+.ap-form-group {
+    margin-bottom: 20px;
+}
+
+.ap-form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dash-text);
+    margin-bottom: 8px;
+}
+
+.ap-form-group .req {
+    color: #ef4444;
+}
+
+.ap-form-group input,
+.ap-form-group select,
+.ap-form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--dash-border);
+    background: #f8fafc;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--dash-text);
+    transition: all 0.2s;
+}
+
+.ap-form-group input:focus,
+.ap-form-group select:focus,
+.ap-form-group textarea:focus {
+    outline: none;
+    border-color: var(--dash-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(20, 58, 230, 0.1);
+}
+
+.ap-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ap-helper-text {
+    font-size: 0.8rem;
+    color: var(--dash-text-muted);
+    font-weight: 500;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+/* ── Condition Toggle ── */
+.condition-toggle {
+    display: flex;
+    gap: 12px;
+}
+
+.cond-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: 1.5px solid var(--dash-border);
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8fafc;
+    color: var(--dash-text-muted);
+}
+
+.cond-btn input {
+    display: none;
+}
+
+.cond-btn.active {
+    background: white;
+}
+
+.cond-btn.active.new {
+    border-color: #16a34a;
+    color: #16a34a;
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.15);
+}
+
+.cond-btn.active.used {
+    border-color: #b78a0c;
+    color: #b78a0c;
+    box-shadow: 0 4px 10px rgba(202, 138, 4, 0.15);
+}
+
+/* ── Image Upload ── */
+.ap-upload-zone {
+    margin-top: 16px;
+}
+
+.ap-upload-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ap-upload-trigger:hover {
+    border-color: var(--dash-primary);
+    background: #eff6ff;
+}
+
+.upload-link {
+    font-weight: 800;
+    color: var(--dash-primary);
+    margin-top: 12px;
+}
+
+.upload-hint {
+    font-size: 0.85rem;
+    color: var(--dash-text-muted);
+    font-weight: 500;
+    margin: 4px 0 8px;
+}
+
+.upload-req {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.ap-image-preview-list {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.preview-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--dash-border);
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-img-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cover-badge {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--dash-primary);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 2px 0;
+}
+
+/* ── Deals Badge Calculator ── */
+.ap-discount-calc {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.calc-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #166534;
+}
+
+.calc-badge {
+    background: #16a34a;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 900;
+    box-shadow: 0 4px 8px rgba(22, 163, 74, 0.2);
+}
+
+/* ── Description specific ── */
+.ap-desc-area {
+    resize: vertical;
+}
+
+/* ── Action Bar ── */
+.ap-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 30px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--dash-border);
+    box-shadow: var(--dash-shadow);
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.ap-action-right {
+    display: flex;
+    gap: 16px;
+}
+
+.ap-btn-cancel,
+.ap-btn-draft,
+.ap-btn-publish {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ap-btn-cancel {
+    background: white;
+    border: 1.5px solid var(--dash-border);
+    color: var(--dash-text-muted);
+}
+
+.ap-btn-cancel:hover {
+    background: #f1f5f9;
+    color: var(--dash-text);
+}
+
+.ap-btn-draft {
+    background: white;
+    border: 1.5px solid var(--dash-primary);
+    color: var(--dash-primary);
+}
+
+.ap-btn-draft:hover {
+    background: #eff6ff;
+}
+
+.ap-btn-publish {
+    background: var(--dash-accent);
+    border: none;
+    color: var(--dash-sidebar);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(248, 194, 5, 0.3);
+}
+
+.ap-btn-publish:hover {
+    background: #e6b404;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(248, 194, 5, 0.4);
+}
+
+/* ── Responsive Mobile Layout ── */
+@media (max-width: 1024px) {
+    .ap-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .ap-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .ap-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ap-action-bar {
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .ap-btn-cancel {
+        width: 100%;
+    }
+
+    .ap-action-right {
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .ap-btn-draft,
+    .ap-btn-publish {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,253 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --hd-login-blue: #1A3FE3;
+  --hd-login-text: #1E2B5A;
+  --hd-login-gray: #718096;
+  --hd-login-input-bg: #F8FAFC;
+  --hd-login-border: #E2E8F0;
+  --hd-login-white: #FFFFFF;
+}
+
+.login-page-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F1F5F9; /* Shifting to a slightly more contrasted background */
+  padding: 60px 20px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.hd-login-card {
+  width: 100%;
+  max-width: 550px; /* Reduced from 979px */
+  background-color: var(--hd-login-white);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Slightly deeper shadow for more depth */
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-top: 12px solid var(--hd-login-blue); /* Thinner accent bar for smaller card */
+}
+
+.hd-login-content {
+  padding: 50px 40px; /* Reduced from 80px 120px */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hd-login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hd-login-header h1 {
+  font-size: 32px; /* Reduced from 48px */
+  color: var(--hd-login-text);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.hd-login-header p {
+  font-size: 16px; /* Reduced from 20px */
+  color: var(--hd-login-gray);
+  font-weight: 400;
+}
+
+.hd-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px; /* Large gaps between input groups */
+}
+
+.hd-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hd-label {
+  font-size: 16px; /* Reduced from 18px */
+  font-weight: 600;
+  color: #2D3748;
+}
+
+.hd-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.hd-login-input {
+  width: 100%;
+  height: 54px; /* Reduced from 64px */
+  padding: 0 20px;
+  background-color: var(--hd-login-input-bg);
+  border: 1px solid var(--hd-login-border);
+  border-radius: 8px;
+  font-size: 16px; /* Reduced from 18px */
+  color: var(--hd-login-text);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.hd-login-input:focus {
+  border-color: var(--hd-login-blue);
+  background-color: var(--hd-login-white);
+  box-shadow: 0 0 0 3px rgba(26, 63, 227, 0.1);
+}
+
+.hd-login-input::placeholder {
+  color: #CBD5E0;
+}
+
+.hd-eye-icon {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2D3748;
+  cursor: pointer;
+}
+
+.hd-login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hd-remember-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #718096;
+  cursor: pointer;
+}
+
+.hd-remember-me input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.hd-forgot-password {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A3FE3; /* Updated to match the specific blue link in the image */
+  text-decoration: none;
+}
+
+.hd-login-btn {
+  height: 56px; /* Reduced from 64px */
+  background-color: var(--hd-login-blue);
+  color: var(--hd-login-white);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px; /* Reduced from 20px */
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 5px;
+}
+
+.hd-login-btn:hover {
+  background-color: #1534BF;
+  transform: translateY(-1px);
+}
+
+.hd-login-btn:active {
+  transform: translateY(0);
+}
+
+/* Social Divider */
+.hd-social-divider {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.hd-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #CBD5E0;
+}
+
+.hd-divider-text {
+  font-size: 16px;
+  color: var(--hd-login-gray);
+  font-weight: 500;
+}
+
+/* Social Icons Section */
+.hd-social-icons {
+  display: flex;
+  justify-content: center; /* Center icons */
+  gap: 30px; /* Consistent gap */
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.hd-social-icon {
+  width: 60px; /* Reduced from 80px */
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.hd-social-icon:hover {
+  transform: scale(1.1);
+}
+
+.hd-social-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Login Footer */
+.hd-login-footer {
+  text-align: center;
+  font-size: 18px;
+  color: var(--hd-login-gray);
+  font-weight: 500;
+}
+
+.hd-login-footer a {
+  color: #1A3FE3;
+  margin-left: 10px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.hd-login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments for mid-size screens */
+@media (max-width: 1024px) {
+  .hd-login-card {
+    width: 100%;
+    height: auto;
+    max-width: 979px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hd-login-content {
+    padding: 60px 40px;
+  }
+  .hd-login-header h1 {
+    font-size: 36px;
+  }
+  .hd-social-icons {
+    padding: 0;
+  }
+}
