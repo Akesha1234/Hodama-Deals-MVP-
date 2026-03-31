@@ -358,6 +358,32 @@ const Register = () => {
                                     </div>
                                 </div>
 
+                                <div className="input-block-labeled">
+                                    <label>Confirm Password</label>
+                                    <div className="pass-input-wrapper-new">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            className={`reg-input-new ${(confirmPassword && password !== confirmPassword) ? 'error-border' : ''}`}
+                                            placeholder="Confirm your password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="pass-toggle-modern"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            disabled={isLoading}
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
+                                    {confirmPassword && password !== confirmPassword && (
+                                        <p className="error-text" style={{ color: 'red', fontSize: '0.85rem', marginTop: '4px' }}>Passwords do not match</p>
+                                    )}
+                                </div>
+
                                 {/* Mock Captcha Section */}
                                 <div className="mock-captcha-container">
                                     <div className="captcha-left">
