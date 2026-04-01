@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Package,
     Clock,
@@ -32,26 +32,31 @@ const AdminManageDeals = () => {
     const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, productId: null });
 
     // Mock Data for Deals
-    const [products, setProducts] = useState([
-        { id: 'D1024', name: 'Wireless Headphones Offer', client: 'TechStore', category: 'Electronics', price: 'Rs 4,500', stock: 1250, status: 'Approved', image: '🎧', rating: 4.8, reviews: 15 },
-        { id: 'D1025', name: 'Smart Watch Z Deal', client: 'GadgetHub', category: 'Gadgets', price: 'Rs 12,000', stock: 450, status: 'Pending', image: '⌚', rating: 0, reviews: 0 },
-        { id: 'D1026', name: 'Premium Leather Bag Sale', client: 'FashionHub', category: 'Fashion', price: 'Rs 8,500', stock: 890, status: 'Approved', image: '👜', rating: 4.5, reviews: 22 },
-        { id: 'D1027', name: 'Portable BT Speaker Promo', client: 'SoundBox', category: 'Audio', price: 'Rs 3,200', stock: 320, status: 'Disabled', image: '🔊', rating: 3.9, reviews: 8 },
-        { id: 'D1028', name: 'USB-C Fast Charger Offer', client: 'TechStore', category: 'Electronics', price: 'Rs 1,500', stock: 2100, status: 'Pending', image: '🔌', rating: 0, reviews: 0 },
-    ]);
+    const [products, setProducts] = useState([]);
 
-    const stats = {
-        total: 4560,
-        pending: 45,
-        approved: 4420,
-        disabled: 95
+    useEffect(() => {
+        const fetchAllDeals = () => {
+            const storedDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+            setProducts(storedDeals);
+        };
+        fetchAllDeals();
+        window.addEventListener('storage', fetchAllDeals);
+        return () => window.removeEventListener('storage', fetchAllDeals);
+    }, []);
+
+    const updateGlobalStorage = (updated) => {
+        localStorage.setItem('hodama_all_deals_v1', JSON.stringify(updated));
+        setProducts(updated);
     };
 
     const handleAction = (id, newStatus) => {
-        setProducts(products.map(p => p.id === id ? { ...p, status: newStatus } : p));
+        const updated = products.map(p => p.id === id ? { ...p, status: newStatus } : p);
+        updateGlobalStorage(updated);
+        
         if (selectedProduct && selectedProduct.id === id) {
             setSelectedProduct({ ...selectedProduct, status: newStatus });
         }
+        alert(`Deal ${newStatus} successfully!`);
     };
 
     const handleDelete = (id) => {
@@ -60,10 +65,19 @@ const AdminManageDeals = () => {
 
     const confirmDeleteAction = () => {
         if (confirmDelete.productId) {
-            setProducts(products.filter(p => p.id !== confirmDelete.productId));
+            const updated = products.filter(p => p.id !== confirmDelete.productId);
+            updateGlobalStorage(updated);
             setConfirmDelete({ isOpen: false, productId: null });
             setSelectedProduct(null);
+            alert('Deal removed permanently.');
         }
+    };
+
+    const stats = {
+        total: products.length,
+        pending: products.filter(p => p.status === 'Pending').length,
+        approved: products.filter(p => p.status === 'Approved' || p.status === 'Active').length,
+        disabled: products.filter(p => p.status === 'Disabled').length
     };
 
     return (
@@ -109,7 +123,7 @@ const AdminManageDeals = () => {
                     <div className="amp-stat-icon bg-red"><XCircle size={24} /></div>
                     <div className="amp-stat-content">
                         <span className="amp-stat-value">{stats.disabled}</span>
-                        <span className="amp-stat-label">Expired Deals</span>
+                        <span className="amp-stat-label">Disabled Deals</span>
                     </div>
                 </div>
             </div>
@@ -169,19 +183,21 @@ const AdminManageDeals = () => {
                                     <tr key={product.id}>
                                         <td>
                                             <div className="amp-product-cell">
-                                                <div className="amp-product-img">{product.image}</div>
+                                                <div className="amp-product-img">
+                                                    <img src={product.img || product.image || "/assets/images/placeholder_deal.png"} alt={product.name} />
+                                                </div>
                                                 <div className="amp-product-info">
                                                     <span className="amp-product-name">{product.name}</span>
-                                                    <span className="amp-product-id">{product.id}</span>
+                                                    <span className="amp-product-id">ID: {product.id}</span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="amp-val-bold">{product.client}</td>
+                                        <td className="amp-val-bold">{product.storeName || product.client || 'General Vendor'}</td>
                                         <td><span className="amp-cat-tag">{product.category}</span></td>
-                                        <td className="amp-price">{product.price}</td>
+                                        <td className="amp-price">LKR {product.price}</td>
                                         <td>
                                             <span className="amp-stock-tag">
-                                                {product.stock} Views
+                                                {product.views || 0} Clicks
                                             </span>
                                         </td>
                                         <td>

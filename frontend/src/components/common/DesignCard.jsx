@@ -11,9 +11,7 @@ const DesignCard = ({ deal }) => {
     const navigate = useNavigate();
     const { toggleWishlist, isInWishlist } = useWishlist();
 
-    const hasSpace = deal.badge && deal.badge.includes(' ');
-    const badgeTop = hasSpace ? deal.badge.split(' ')[0] : deal.badge;
-    const badgeBot = hasSpace ? deal.badge.substring(deal.badge.indexOf(' ') + 1) : '';
+
 
     // Standardized Category Mapping
     const catList = deal.category ? deal.category.toLowerCase() : '';
@@ -46,13 +44,34 @@ const DesignCard = ({ deal }) => {
         catIcon = "/assets/images/Health&Beauty.png";
     }
 
+    const handleCardClick = () => {
+        const stored = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+        
+        // 1. Increment individual deal views
+        const updated = stored.map(d => {
+            if (d.id === deal.id) {
+                return { ...d, views: (d.views || 0) + 1 };
+            }
+            return d;
+        });
+        localStorage.setItem('hodama_all_deals_v1', JSON.stringify(updated));
+
+        // 2. Track global daily click for dashboard stats
+        const today = new Date().toISOString().split('T')[0];
+        const stats = JSON.parse(localStorage.getItem('hodama_analytics_v1') || '{}');
+        if (!stats[today]) stats[today] = { clicks: 0, views: 0 };
+        stats[today].clicks = (stats[today].clicks || 0) + 1;
+        localStorage.setItem('hodama_analytics_v1', JSON.stringify(stats));
+        
+        navigate(`/deal/${deal.id}`);
+    };
+
     return (
-        <div key={deal.id} className="hd-prod-card-standard" onClick={() => navigate(`/deal/${deal.id}`)}>
+        <div key={deal.id} className="hd-prod-card-standard" onClick={handleCardClick}>
             <div className="hd-prod-img-box">
                 {deal.badge && (
                     <div className="hd-badge-top-left">
-                        <span className="badge-top">{badgeTop}</span>
-                        {badgeBot && <span className="badge-bot">{badgeBot}</span>}
+                        <span className="badge-text">{deal.badge.toUpperCase()}</span>
                     </div>
                 )}
                 <button 
@@ -97,9 +116,15 @@ const DesignCard = ({ deal }) => {
 
                 <div className="hd-meta-row">
                     <div className="hd-rating-box">
-                        <Star size={18} fill="#facc15" color="#facc15" />
-                        <span className="hd-rating-val">{deal.rating}</span>
-                        <span className="hd-rating-count">({deal.ratingCount})</span>
+                        <Star size={18} fill={parseFloat(deal.rating) > 0 ? "#facc15" : "none"} color={parseFloat(deal.rating) > 0 ? "#facc15" : "#94a3b8"} />
+                        {parseInt(deal.ratingCount) > 0 ? (
+                            <>
+                                <span className="hd-rating-val">{deal.rating}</span>
+                                <span className="hd-rating-count">({deal.ratingCount})</span>
+                            </>
+                        ) : (
+                            <span className="hd-rating-count" style={{ marginLeft: '4px' }}>No reviews yet</span>
+                        )}
                     </div>
                     <div className="hd-loc-box">
                         <MapPin size={14} color="#64748b" />
@@ -110,9 +135,17 @@ const DesignCard = ({ deal }) => {
                 <div className="hd-price-row">
                     <div className="hd-price-left">
                         <span className="hd-price-now">
-                            {deal.price.includes('LKR') || deal.price.includes('%') || deal.price.includes('Total') ? deal.price : `LKR ${deal.price}`}
+                            {(() => {
+                                const p = deal.price || deal.currentPrice || "N/A";
+                                const pStr = p.toString();
+                                return (pStr.includes('LKR') || pStr.includes('%') || pStr.includes('Total')) ? pStr : `LKR ${pStr}`;
+                            })()}
                         </span>
-                        {deal.oldPrice && <span className="hd-price-was">LKR {deal.oldPrice}</span>}
+                        {(deal.oldPrice || deal.originalPrice) && (
+                            <span className="hd-price-was">
+                                LKR {deal.oldPrice || deal.originalPrice}
+                            </span>
+                        )}
                     </div>
                     <span className={
                         deal.dealType === 'LIMITED OFFER' ? 'hd-limited-badge' :

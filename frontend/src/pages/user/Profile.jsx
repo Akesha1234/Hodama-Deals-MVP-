@@ -23,6 +23,28 @@ const Profile = () => {
         navigate('/');
     };
 
+    const { becomeSeller } = useAuth();
+    const [partnerForm, setPartnerForm] = useState({ businessName: '', category: '', websiteLink: '' });
+    const [regMessage, setRegMessage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleBecomePartner = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setRegMessage(null);
+        try {
+            await becomeSeller(partnerForm);
+            setIsLoading(false);
+            setRegMessage({ type: 'success', text: 'Success! You are now a Partner. Redirecting...' });
+            setTimeout(() => {
+                navigate('/client/dashboard');
+            }, 1500);
+        } catch (error) {
+            setIsLoading(false);
+            setRegMessage({ type: 'error', text: error.message });
+        }
+    };
+
     // Sample Data
 
 
@@ -184,8 +206,8 @@ const Profile = () => {
                                 <Bell size={18} /> Notifications
                             </button>
                             <hr />
-                            {user?.role !== 'Client' && (
-                                <button className="upgrade-client-btn" onClick={() => navigate('/register')}>
+                            {user?.role !== 'seller' && user?.role !== 'admin' && (
+                                <button className={activeTab === 'partner' ? 'active upgrade-client-btn' : 'upgrade-client-btn'} onClick={() => setActiveTab('partner')}>
                                     <Store size={18} /> Become a Partner
                                 </button>
                             )}
@@ -328,7 +350,7 @@ const Profile = () => {
                                         <h2>My Wishlist</h2>
                                         <p>Deals you have saved for later from the platform.</p>
                                     </div>
-                                    <button className="add-new-btn border-blue cursor-pointer bg-white text-blue-600 border border-blue-600" onClick={() => navigate('/wishlist')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold' }}>Manage Page <ChevronRight size={16}/></button>
+                                    <button className="add-new-btn border-blue cursor-pointer bg-white text-blue-600 border border-blue-600" onClick={() => navigate('/wishlist')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold' }}>Manage Page <ChevronRight size={16} /></button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                                     {recommendedDeals.map(p => <ProductCard key={p.id} product={p} />)}
@@ -409,6 +431,75 @@ const Profile = () => {
                                         <div className={`toggle-pill ${notifications.security ? 'active' : ''}`}></div>
                                     </div>
                                 </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'partner' && (
+                            <div className="profile-edit-section fade-in">
+                                <div className="section-head">
+                                    <h2>Become a Partner</h2>
+                                    <p>Upgrade to a seller account to start posting and managing your own deals.</p>
+                                </div>
+
+                                {regMessage && (
+                                    <div className={`message-banner ${regMessage.type}`} style={{
+                                        padding: '15px', borderRadius: '8px', marginBottom: '20px',
+                                        backgroundColor: regMessage.type === 'error' ? '#FFF5F5' : '#F0FFF4',
+                                        color: regMessage.type === 'error' ? '#C53030' : '#2F855A',
+                                        textAlign: 'center', fontWeight: '600'
+                                    }}>
+                                        {regMessage.text}
+                                    </div>
+                                )}
+
+                                <form className="modern-form" onSubmit={handleBecomePartner}>
+                                    <div className="form-grid">
+                                        <div className="input-field span-full">
+                                            <label>Business Name</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Your Store/Business Name"
+                                                required
+                                                value={partnerForm.businessName}
+                                                onChange={e => setPartnerForm({ ...partnerForm, businessName: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="input-field span-full">
+                                            <label>Business Category</label>
+                                            <select
+                                                required
+                                                value={partnerForm.category}
+                                                onChange={e => setPartnerForm({ ...partnerForm, category: e.target.value })}
+                                                style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '8px', outline: 'none', backgroundColor: '#F8F9FA' }}
+                                            >
+                                                <option value="" disabled>Select category</option>
+                                                <option value="salon">Salon</option>
+                                                <option value="restaurant">Restaurant</option>
+                                                <option value="hotel">Hotel</option>
+                                                <option value="electronics">Electronics</option>
+                                                <option value="healthBeauty">Health & Beauty</option>
+                                                <option value="groceries">Groceries</option>
+                                                <option value="spa">Spa</option>
+                                                <option value="fashion">Fashion</option>
+                                                <option value="other">Other Services</option>
+                                            </select>
+                                        </div>
+                                        <div className="input-field span-full">
+                                            <label>Website Link (Optional)</label>
+                                            <input
+                                                type="url"
+                                                placeholder="https://yourwebsite.com"
+                                                value={partnerForm.websiteLink}
+                                                onChange={e => setPartnerForm({ ...partnerForm, websiteLink: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-buttons mt-6" style={{ marginTop: '20px' }}>
+                                        <button type="submit" className="save-btn shadow-blue" style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: "bold" }} disabled={isLoading}>
+                                            {isLoading ? 'Processing...' : 'UPGRADE TO SELLER ACCOUNT'}
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         )}
                     </main>

@@ -7,7 +7,8 @@ import {
     User, 
     LogOut, 
     Home,
-    X
+    X,
+    Image as ImageIcon
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './ClientSidebar.css';
@@ -62,6 +63,14 @@ const ClientSidebar = ({ isOpen, toggleSidebar }) => {
                 >
                     <Plus size={22} className="nav-icon" />
                     <span>Add New Deal</span>
+                </button>
+
+                <button 
+                    className={`nav-item-new ${isActive('/client/banner-promotions') ? 'active' : ''}`}
+                    onClick={() => navigate('/client/banner-promotions')}
+                >
+                    <ImageIcon size={22} className="nav-icon" />
+                    <span>Banner Promotions</span>
                 </button>
 
                 <button 

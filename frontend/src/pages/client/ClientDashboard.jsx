@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     LayoutDashboard,
     Package,
@@ -16,7 +16,10 @@ import {
     BarChart,
     Clock,
     TrendingUp as ChartIcon,
-    BarChart3
+    BarChart3,
+    AlertCircle,
+    ArrowRight,
+    CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -31,25 +34,178 @@ const ClientDashboard = () => {
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-    const stats = [
-        { label: 'Live Deals', value: '45', trend: '+5', icon: <Tag size={20} />, color: '#71717a' },
-        { label: 'Deal Views', value: '128', trend: '+12%', icon: <Eye size={20} />, color: '#ed8936' },
-        { label: 'Total Deals', value: '10', trend: '+5', icon: <BarChart3 size={20} />, color: '#48bb78' },
-        { label: 'Active Promotions', value: '03', trend: 'Hot', icon: <Clock size={20} />, color: '#9f7aea' },
-    ];
+    // Data States
+    const [deals, setDeals] = useState([]);
+    const [banners, setBanners] = useState([]);
+    const [analytics, setAnalytics] = useState({});
+    const [isProfileComplete, setIsProfileComplete] = useState(true);
+    const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+    
+    // Form State for Setup Modal
+    const [formData, setFormData] = useState({
+        storeName: '',
+        storeCategory: 'Electronics',
+        storeRating: '4.8',
+        storeLink: '',
+        storeDescription: '',
+        storeLogo: null
+    });
 
-    const chartData = [
-        { label: '1 Mar', value: 30 },
-        { label: '2 Mar', value: 60 },
-        { label: '3 Mar', value: 50 },
-        { label: '4 Mar', value: 90 },
-        { label: '5 Mar', value: 70 },
-        { label: '6 Mar', value: 85 },
-        { label: '7 Mar', value: 45 },
-        { label: '8 Mar', value: 75 },
-        { label: '9 Mar', value: 55 },
-        { label: '10 Mar', value: 80 },
-    ];
+    useEffect(() => {
+        const fetchDashboardData = () => {
+            const userName = user?.name || 'Client';
+            
+            // 1. Fetch Deals
+            const storedDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+            const myDeals = storedDeals.filter(d => 
+                (d.storeName && d.storeName.toLowerCase() === userName.toLowerCase()) || d.brand === userName
+            );
+            setDeals(myDeals);
+
+            // 2. Fetch Banners
+            const storedBanners = JSON.parse(localStorage.getItem('hodama_banner_requests_v1') || '[]');
+            // (Assuming owner filtering if needed, for now all shown or filtered by user if added to bannerReq)
+            setBanners(storedBanners);
+
+            // 3. Fetch Analytics
+            const storedAnalytics = JSON.parse(localStorage.getItem('hodama_analytics_v1') || '{}');
+            setAnalytics(storedAnalytics);
+
+            // 4. Check Profile Completion & Home Request Status
+            const clientProfile = JSON.parse(localStorage.getItem('hodama_client_user_v1') || '{}');
+            const hasRequested = clientProfile.homeRequestStatus && clientProfile.homeRequestStatus !== 'None';
+            
+            // Hide banner if they have already requested OR profile is fully done
+            setIsProfileComplete(hasRequested || (clientProfile.storeName && clientProfile.storeLogo));
+            
+            if (clientProfile.storeName) {
+                setFormData(prev => ({
+                    ...prev,
+                    storeName: clientProfile.storeName,
+                    storeCategory: clientProfile.storeCategory || 'Electronics',
+                    storeRating: clientProfile.storeRating || '4.8',
+                    storeLink: clientProfile.storeLink || '',
+                    storeDescription: clientProfile.storeDescription || '',
+                    storeLogo: clientProfile.storeLogo || null
+                }));
+            }
+        };
+
+        fetchDashboardData();
+        
+        // 5. Success Notification Check
+        const clientProfile = JSON.parse(localStorage.getItem('hodama_client_user_v1') || '{}');
+        if (clientProfile.homeRequestStatus === 'Approved' && !clientProfile.hasSeenApprovalNotif) {
+            alert("🎉 Congratulations! Your store has been approved and is now live on the Home Page!");
+            clientProfile.hasSeenApprovalNotif = true;
+            localStorage.setItem('hodama_client_user_v1', JSON.stringify(clientProfile));
+        }
+
+        window.addEventListener('storage', fetchDashboardData);
+        return () => window.removeEventListener('storage', fetchDashboardData);
+    }, [user?.name]);
+
+    // Derived Stats
+    const stats = useMemo(() => {
+        const liveCount = deals.filter(d => d.status === 'Active' || d.status === 'Live').length;
+        const totalViews = deals.reduce((sum, d) => sum + (parseInt(d.views) || 0), 0);
+        const promoCount = banners.filter(b => b.status === 'Approved').length;
+
+        return [
+            { label: 'Live Deals', value: liveCount.toString(), trend: '+2', icon: <Tag size={20} />, color: '#71717a' },
+            { label: 'Deal Views', value: totalViews.toLocaleString(), trend: '+5%', icon: <Eye size={20} />, color: '#ed8936' },
+            { label: 'Total Deals', value: deals.length.toString(), trend: '+1', icon: <BarChart3 size={20} />, color: '#48bb78' },
+            { label: 'Active Promotions', value: promoCount.toString().padStart(2, '0'), trend: 'Hot', icon: <Clock size={20} />, color: '#9f7aea' },
+        ];
+    }, [deals, banners]);
+
+    // Chart Data (Last 10 days)
+    const chartData = useMemo(() => {
+        const data = [];
+        for (let i = 9; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const label = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            data.push({
+                label: label,
+                value: analytics[dateStr]?.clicks || 0
+            });
+        }
+        return data;
+    }, [analytics]);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayClicks = analytics[todayStr]?.clicks || 0;
+
+    const latestDeals = deals.slice(0, 5);
+    const topPerforming = [...deals].sort((a, b) => (parseInt(b.views) || 0) - (parseInt(a.views) || 0)).slice(0, 3);
+
+    const handleFormChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleLogoUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (2MB limit)
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Image is too large! Please choose an image smaller than 2MB.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({ ...prev, storeLogo: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSetupSubmit = (e) => {
+        e.preventDefault();
+        
+        const clientProfile = JSON.parse(localStorage.getItem('hodama_client_user_v1') || '{}');
+        const updatedProfile = {
+            ...clientProfile,
+            ...formData,
+            isHomeRequested: true,
+            homeRequestStatus: 'Pending'
+        };
+
+        // 1. Save User Profile
+        localStorage.setItem('hodama_client_user_v1', JSON.stringify(updatedProfile));
+
+        // 2. Add to Global Stores List
+        const storedStores = JSON.parse(localStorage.getItem('hodama_all_stores_v1') || '[]');
+        const storeData = {
+            name: formData.storeName,
+            img: formData.storeLogo || "/assets/images/placeholder_store.png",
+            url: formData.storeLink,
+            rating: formData.storeRating,
+            category: formData.storeCategory,
+            ownerEmail: updatedProfile.email,
+            isClaimed: true,
+            status: 'Pending'
+        };
+        const updatedStores = [...storedStores.filter(s => s.ownerEmail !== updatedProfile.email), storeData];
+        localStorage.setItem('hodama_all_stores_v1', JSON.stringify(updatedStores));
+
+        // 3. Add to Requests List
+        const requests = JSON.parse(localStorage.getItem('hodama_store_requests_v1') || '[]');
+        const reqData = {
+            ...storeData,
+            requestDate: new Date().toLocaleDateString(),
+            status: 'Pending'
+        };
+        const updatedRequests = [...requests.filter(r => r.ownerEmail !== updatedProfile.email), reqData];
+        localStorage.setItem('hodama_store_requests_v1', JSON.stringify(updatedRequests));
+
+        setIsSetupModalOpen(false);
+        setIsProfileComplete(true);
+        alert("Store setup submitted! Your request is now pending admin approval for the Home Page.");
+    };
 
     return (
         <div className="client-dashboard-wrapper">
@@ -57,6 +213,40 @@ const ClientDashboard = () => {
 
             <main className="dashboard-main-content">
                 <ClientTopbar toggleSidebar={toggleSidebar} />
+
+                {/* Profile Setup Notification */}
+                {!isProfileComplete && (
+                    <div className="onboarding-banner fade-in">
+                        <div className="onboarding-icon">
+                            <AlertCircle size={24} />
+                        </div>
+                        <div className="onboarding-text">
+                            <h3>Complete Your Store Profile!</h3>
+                            <p>Your store and deals won't be fully visible to customers until you add your store name, logo, and other details. Let's get you set up!</p>
+                        </div>
+                        <button className="onboarding-action-btn" onClick={() => setIsSetupModalOpen(true)}>
+                            <span>Complete Setup</span>
+                            <ArrowRight size={18} />
+                        </button>
+                    </div>
+                )}
+
+                {/* Approval Notification Banner */}
+                {JSON.parse(localStorage.getItem('hodama_client_user_v1') || '{}').homeRequestStatus === 'Approved' && (
+                    <div className="approval-banner fade-in">
+                        <div className="approval-icon">
+                            <CheckCircle2 size={24} />
+                        </div>
+                        <div className="approval-text">
+                            <h3>Store Approved!</h3>
+                            <p>Your store is now featured on the "Top Stores For You" section on the Home Page.</p>
+                        </div>
+                        <button className="view-home-btn" onClick={() => window.open('/', '_blank')}>
+                            <span>View Home Page</span>
+                            <Home size={18} />
+                        </button>
+                    </div>
+                )}
 
                 <div className="dashboard-view-container">
 
@@ -68,7 +258,7 @@ const ClientDashboard = () => {
                         </div>
                         <div className="today-summary">
                             <span className="label">Today's Deal Clicks</span>
-                            <span className="value">142</span>
+                            <span className="value">{todayClicks}</span>
                         </div>
                     </div>
 
@@ -148,7 +338,7 @@ const ClientDashboard = () => {
                                 <h3>Latest Live Deals</h3>
                                 <button className="text-btn" onClick={() => navigate('/client/manage-deals')}>View All</button>
                             </div>
-                            <table className="client-table">
+                             <table className="client-table">
                                 <thead>
                                     <tr>
                                         <th>DEAL REF</th>
@@ -159,18 +349,23 @@ const ClientDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>#DL1054</td>
-                                        <td>
-                                            <div className="deal-cell">
-                                                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=100&h=100&fit=crop" alt="Deal" className="deal-thumb" />
-                                                <span>MID WEEK SPECIALS</span>
-                                            </div>
-                                        </td>
-                                        <td>Restaurant</td>
-                                        <td>Total Bill: 25% OFF</td>
-                                        <td><span className="badge active">Active</span></td>
-                                    </tr>
+                                    {latestDeals.length === 0 && (
+                                        <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No deals found</td></tr>
+                                    )}
+                                    {latestDeals.map(deal => (
+                                        <tr key={deal.id}>
+                                            <td>#{deal.id.toString().slice(-6)}</td>
+                                            <td>
+                                                <div className="deal-cell" style={{ cursor: 'pointer' }} onClick={() => window.open(`/deal/${deal.id}`, '_blank')}>
+                                                    <img src={deal.img || deal.image} alt={deal.name} className="deal-thumb" />
+                                                    <span style={{ fontWeight: 800, color: '#2563eb' }}>{deal.name}</span>
+                                                </div>
+                                            </td>
+                                            <td>{deal.category}</td>
+                                            <td>{deal.price}</td>
+                                            <td><span className={`badge ${deal.status?.toLowerCase() || 'active'}`}>{deal.status || 'Active'}</span></td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -180,32 +375,100 @@ const ClientDashboard = () => {
                             <div className="section-header">
                                 <h3>Highest Performing Deals</h3>
                             </div>
-                            <div className="top-products-list">
-                                <div className="top-product-item">
-                                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=100&h=100&fit=crop" alt="Deal" />
-                                    <div className="tp-info">
-                                        <span className="tp-name">FLASH SALE ALERT!</span>
-                                        <span className="tp-sold">Grab Clicks: 624</span>
+                             <div className="top-products-list">
+                                {topPerforming.length === 0 && (
+                                    <div style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No data available</div>
+                                )}
+                                {topPerforming.map(deal => (
+                                    <div key={deal.id} className="top-product-item">
+                                        <img src={deal.img || deal.image} alt={deal.name} />
+                                        <div className="tp-info">
+                                            <span className="tp-name">{deal.name}</span>
+                                            <span className="tp-sold">Grab Clicks: {deal.views || 0}</span>
+                                        </div>
+                                        <div className="tp-growth-badge">
+                                            <TrendingUp size={14} /> +{(Math.random() * 20).toFixed(1)}%
+                                        </div>
                                     </div>
-                                    <div className="tp-growth-badge">
-                                        <TrendingUp size={14} /> +15%
-                                    </div>
-                                </div>
-                                <div className="top-product-item">
-                                    <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=100&h=100&fit=crop" alt="Deal" />
-                                    <div className="tp-info">
-                                        <span className="tp-name">MID WEEK SPECIALS</span>
-                                        <span className="tp-sold">Grab Clicks: 456</span>
-                                    </div>
-                                    <div className="tp-growth-badge">
-                                        <TrendingUp size={14} /> +8%
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
             </main>
+
+            {/* Setup Modal */}
+            {isSetupModalOpen && (
+                <div className="setup-modal-overlay" onClick={() => setIsSetupModalOpen(false)}>
+                    <div className="setup-modal-content" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <div className="header-icon-box"><Plus size={24} /></div>
+                            <div className="header-text">
+                                <h2>Setup Your Store</h2>
+                                <p>Fill in these details to request listing on the Home Page.</p>
+                            </div>
+                            <button className="close-btn" onClick={() => setIsSetupModalOpen(false)}><X size={20} /></button>
+                        </div>
+
+                        <form onSubmit={handleSetupSubmit} className="setup-form">
+                            <div className="form-row-img">
+                                <div className="img-upload-wrap" onClick={() => document.getElementById('setupLogo').click()}>
+                                    {formData.storeLogo ? (
+                                        <img src={formData.storeLogo} alt="Logo" className="preview-logo" />
+                                    ) : (
+                                        <div className="placeholder-logo">
+                                            <TrendingUp size={24} />
+                                            <span>Add Logo</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <input type="file" id="setupLogo" hidden accept="image/*" onChange={handleLogoUpload} />
+                                <div className="img-text">
+                                    <h4>Store Logo</h4>
+                                    <p>Circular logo recommended for best look on Home Page.</p>
+                                </div>
+                            </div>
+
+                            <div className="form-grid-setup">
+                                <div className="form-group-setup">
+                                    <label>Store Name</label>
+                                    <input type="text" name="storeName" value={formData.storeName} onChange={handleFormChange} placeholder="e.g. Arpico Supercentre" required />
+                                </div>
+                                <div className="form-group-setup">
+                                    <label>Store Category</label>
+                                    <select name="storeCategory" value={formData.storeCategory} onChange={handleFormChange}>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Fashion">Fashion</option>
+                                        <option value="Health & Beauty">Health & Beauty</option>
+                                        <option value="Restaurant">Restaurant</option>
+                                        <option value="Hotel">Hotel</option>
+                                        <option value="Groceries">Groceries</option>
+                                        <option value="Salon">Salon</option>
+                                        <option value="Spa">Spa</option>
+                                    </select>
+                                </div>
+                                <div className="form-group-setup">
+                                    <label>Store Website Link</label>
+                                    <input type="text" name="storeLink" value={formData.storeLink} onChange={handleFormChange} placeholder="https://..." />
+                                </div>
+                                <div className="form-group-setup">
+                                    <label>Store Rating (Initial)</label>
+                                    <input type="text" name="storeRating" value={formData.storeRating} onChange={handleFormChange} placeholder="4.8" />
+                                </div>
+                                <div className="form-group-setup span-full">
+                                    <label>Brief Description</label>
+                                    <textarea name="storeDescription" value={formData.storeDescription} onChange={handleFormChange} placeholder="Tell customers about your store..."></textarea>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer-setup">
+                                <button type="button" className="btn-secondary-setup" onClick={() => setIsSetupModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary-setup">Submit Request</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

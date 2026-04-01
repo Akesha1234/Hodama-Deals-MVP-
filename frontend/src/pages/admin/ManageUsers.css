@@ -325,7 +325,7 @@
     display: inline-flex;
 }
 
-.amu-role-tag.buyer {
+.amu-role-tag.user {
     background: #eff6ff;
     color: #3b82f6;
 }

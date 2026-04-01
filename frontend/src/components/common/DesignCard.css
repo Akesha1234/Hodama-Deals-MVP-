@@ -23,6 +23,9 @@
     width: 100%;
     position: relative;
     background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hd-prod-img {
@@ -34,28 +37,26 @@
 /* Badge styling */
 .hd-badge-top-left {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 12px;
+    left: 12px;
     background: #facc15;
-    color: #102a7a;
-    padding: 6px 12px;
-    border-radius: 0 0 12px 0;
+    color: #1e293b;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 800;
     z-index: 2;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     line-height: 1.2;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.badge-top {
-    display: block;
-    font-size: 16px;
-}
-
-.badge-bot {
-    display: block;
-    font-size: 12px;
-    text-transform: uppercase;
+.badge-text {
+    display: inline-block;
 }
 
 /* Wishlist Button */

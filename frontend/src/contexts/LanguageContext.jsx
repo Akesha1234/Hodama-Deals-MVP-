@@ -52,7 +52,7 @@ export const translations = {
         home: 'Home',
         allCategories: 'All Categories',
         newArrivals: 'New Arrivals',
-        forBuyers: 'For Buyers',
+        forBuyers: 'For Users',
         myAccount: 'My Account',
         orderHistory: 'History',
         returnsRefunds: 'Privacy & Terms',
@@ -251,7 +251,7 @@ export const translations = {
         pdVisitStore: 'Visit Store',
         pdRecommended: 'Recommended For You',
 
-        // ── Buyer Dashboard ──
+        // ── User Dashboard ──
         dashWelcome: (name) => `Welcome back, ${name} 👋`,
         dashSubtitle: 'Manage your orders and deals here.',
         dashTotalOrders: 'Total Orders',
@@ -334,7 +334,7 @@ export const translations = {
         home: 'මුල් පිටුව',
         allCategories: 'සියලු කාණ්ඩ',
         newArrivals: 'නව නිෂ්පාදන',
-        forBuyers: 'ගැනුම්කරුවන් සඳහා',
+        forBuyers: 'පරිශීලකයන් සඳහා',
         myAccount: 'මගේ ගිණුම',
         orderHistory: 'ඉතිහාසය',
         returnsRefunds: 'ප්‍රතිපත්ති',
@@ -533,7 +533,7 @@ export const translations = {
         pdContactClient: 'විකුණුම්කරු සම්බන්ධ කරගන්න',
         pdRecommended: 'ඔබ වෙනුවෙන්ම තෝරාගත්',
 
-        // ── Buyer Dashboard ──
+        // ── User Dashboard ──
         dashWelcome: (name) => `නැවත සාදරයෙන් පිළිගනිමු, ${name} 👋`,
         dashSubtitle: 'ඔබේ ඇණවුම් සහ දීමනා මෙතැනින් කළමනාකරණය කරන්න.',
         dashTotalOrders: 'මුළු ඇණවුම්',

@@ -23,7 +23,8 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useWishlist } from '../../contexts/WishlistContext';
 import DesignCard from '../../components/common/DesignCard';
 import StoreCard from '../../components/common/StoreCard';
-import CategoryCard from '../../components/common/CategoryCard';
+import CategoryCard from '../../components/common/CategoryCard';import { isDealExpired } from '../../utils/dealUtils';
+
 import './Home.css';
 
 
@@ -35,7 +36,7 @@ const Home = () => {
 
     // ── HERO CAROUSEL LOGIC ──
     const [heroIndex, setHeroIndex] = useState(0);
-    const heroImages = [
+    const [heroImages, setHeroImages] = useState([
         "/assets/images/home_hero_nolimit.png",// Fashion
         "/assets/images/home_dsi1.png", //footware
         "/assets/images/home_skin1.png", //skin
@@ -44,7 +45,19 @@ const Home = () => {
         "/assets/images/home_foodcity1.png", // grocery
         "/assets/images/home_hotel1.png", // Hotels
         "/assets/images/home_salon1.png", // salon
-    ];
+    ]);
+
+    useEffect(() => {
+        // Load approved dynamic banners from local storage
+        const storedRequests = JSON.parse(localStorage.getItem('hodama_banner_requests_v1') || '[]');
+        const approvedBanners = storedRequests
+            .filter(req => req.status === 'Approved' && req.image)
+            .map(req => req.image);
+
+        if (approvedBanners.length > 0) {
+            setHeroImages(prev => [...prev, ...approvedBanners]);
+        }
+    }, []);
 
     useEffect(() => {
         const heroInterval = setInterval(() => {
@@ -130,6 +143,14 @@ const Home = () => {
         }
     };
 
+    const storesScrollRef = React.useRef(null);
+    const scrollStores = (dir) => {
+        if (storesScrollRef.current) {
+            const scrollAmount = 200; // width of one store card + gap
+            storesScrollRef.current.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+        }
+    };
+
     // ── DATA FOR RENDERING ──
 
     const dealsProducts = [
@@ -173,7 +194,6 @@ const Home = () => {
     const trendingDeals = [
         { id: 301, name: "NEW YEAR CHICKEN COMBO", description: "Hot & Crispy chicken 06 PC Hot Drumlets 06 PC Kochchi Bites 08 PC Pepsi 1.5L", price: "3,990", img: "/assets/images/KFC2.png", badge: "Trending", storeName: "KFC", storeImg: "/assets/images/KFCLogo.png", rating: "4.1", ratingCount: "6", location: "KFC, Sri Lanka", dealType: "OFFER", category: "Restaurant" },
         { id: 302, name: "Enjoy 10% off on Jagro fresh & frozen strawberries", price: "Total Bill: 10% OFF", img: "/assets/images/cargills1.png", badge: "10% OFF", storeName: "Cargills Food City", storeImg: "/assets/images/cargillsLogo.png", rating: "4.0", ratingCount: "10", location: "Cargills Food City, Sri Lanka", dealType: "OFFER", category: "Grocery" },
-        { id: 303, name: "The Best Korean Skin Care Products Offer", price: "Total Bill: 20% OFF", img: "/assets/images/Skin1.png", badge: "20% OFF", storeName: "Cosmetics.lk", storeImg: "/assets/images/Cosmetics.png", rating: "4.5", ratingCount: "12", location: "Cosmetics.lk", dealType: "OFFER", category: "Health & Beauty" },
         { id: 304, name: "Barista COFFEE RUSH is back!", description: "Enjoy 50% OFF on  favorite Lavazza coffee beverages", price: "Total Bill: 50% OFF", img: "/assets/images/barista1.png", badge: "50% OFF", storeName: "Barista", storeImg: "/assets/images/BaristaLogo.png", rating: "4.6", ratingCount: "43", location: "Barista, Sri Lanka", dealType: "OFFER", category: "Restaurant" },
         { id: 305, name: "Our 4 Pizzas just for Rs.999 Pizza Mania offer", price: "999", img: "/assets/images/dominosPizza1.png", badge: "OFFER", storeName: "Domino's Pizza", storeImg: "/assets/images/DominosLogo.png", rating: "4.4", ratingCount: "20", location: "Domino's Pizza, Sri Lanka", dealType: "OFFER", category: "Restaurant" },
         { id: 306, name: "TCL 55'4K UHD Google TV - TCL55P6K", price: "Rs.179,999", oldPrice: "Rs.199,999", img: "/assets/images/tv1.png", badge: "SALE", storeName: "SINGER", storeImg: "/assets/images/SingerLogo.png", rating: "4.5", ratingCount: "15", location: "SINGER, Sri Lanka", dealType: "SALE", category: "Electronics" },
@@ -188,18 +208,73 @@ const Home = () => {
         { id: 406, name: "Mibro C4 Square HD Screen Smart Watch (Gray)", price: "15,999", oldPrice: "17,999", img: "/assets/images/abans6.png", badge: "11% OFF", storeName: "Abans", storeImg: "/assets/images/abansLogo2.png", rating: "4.6", ratingCount: "41", location: "Abans, Sri Lanka", dealType: "SALE", category: "Electronics" }
     ];
 
+    // ── DYNAMIC DEAL FILTERING LOGIC ──
+    const [localDeals, setLocalDeals] = useState([]);
+    const [localStores, setLocalStores] = useState([]);
 
+    useEffect(() => {
+        const syncData = () => {
+            try {
+                const storedDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+                setLocalDeals(Array.isArray(storedDeals) ? storedDeals : []);
 
+                const storedStores = JSON.parse(localStorage.getItem('hodama_all_stores_v1') || '[]');
+                setLocalStores(Array.isArray(storedStores) ? storedStores : []);
+            } catch (e) {
+                console.error("Error syncing home data:", e);
+            }
+        };
+
+        syncData();
+        window.addEventListener('storage', syncData);
+        return () => window.removeEventListener('storage', syncData);
+    }, []);
+
+    const allDealsPool = React.useMemo(() => {
+        const pool = [...dealsProducts, ...bestDeals, ...trendingDeals, ...abansDeals, ...localDeals];
+        // Ensure we filter out expired deals and ONLY show approved/active deals
+        return pool.filter(d => {
+            const isApproved = !d.status || d.status === 'Approved' || d.status === 'Active';
+            return isApproved && !isDealExpired(d.expiryDate);
+        });
+    }, [localDeals]);
+
+    // 1. Deals Of The Day: Expires today or marked as isDailyDeal
+    const todayStr = new Date().toISOString().split('T')[0];
+    const filteredDayDeals = React.useMemo(() => {
+        const matched = allDealsPool.filter(d => d.isDailyDeal || d.expiryDate === todayStr);
+        return matched.length > 0 ? matched : dealsProducts; // Fallback to static if none added for today
+    }, [allDealsPool, todayStr]);
+
+    // 2. This Month / Best Deals: Marked as isMonthlyDeal
+    const filteredBestDeals = React.useMemo(() => {
+        const matched = allDealsPool.filter(d => d.isMonthlyDeal);
+        return matched.length > 0 ? matched : bestDeals;
+    }, [allDealsPool]);
+
+    // 3. Trending Online: Sort by views descending
+    const filteredTrendingDeals = React.useMemo(() => {
+        const sorted = [...allDealsPool].sort((a, b) => (b.views || 0) - (a.views || 0));
+        return sorted.length > 0 ? sorted.slice(0, 8) : trendingDeals;
+    }, [allDealsPool]);
     // ── STORE STATS LOGIC (Dynamic counts & sorting) ──
-    const getAllDeals = () => [...dealsProducts, ...bestDeals, ...trendingDeals, ...abansDeals];
+    const storesWithStats = React.useMemo(() => {
+        // Merge hardcoded stores with dynamic ones
+        const merged = [...stores, ...localStores];
+        
+        // Ensure unique stores by name (case-insensitive)
+        const unique = Array.from(new Map(merged.map(s => [s.name.toLowerCase(), s])).values());
 
-    const storesWithStats = stores.map(store => {
-        const dealCount = getAllDeals().filter(d =>
-            d.storeName.toLowerCase() === store.name.toLowerCase()
-        ).length;
-        return { ...store, dealsCount: dealCount };
-    }).sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
-    // Sorting by highest rating automatically
+        return unique.map(store => {
+            const dealCount = allDealsPool.filter(d =>
+                d.storeName && d.storeName.toLowerCase() === store.name.toLowerCase()
+            ).length;
+            return { ...store, dealsCount: dealCount || parseInt(store.deals?.split(' ')[0] || '0') };
+        }).filter(s => {
+            // Keep hardcoded mock stores (they have no status) or approved dynamic stores
+            return !s.status || s.status === 'Approved' || s.status === 'Active';
+        }).sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+    }, [localStores, allDealsPool]);
 
     return (
         <div className="hd-home-wrapper-main">
@@ -289,8 +364,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="hd-product-slider-row" ref={dealsScrollRef}>
-                        {dealsProducts.map((p) => <DesignCard key={p.id} deal={p} />)}
-                        {dealsProducts.map(p => <DesignCard key={p.id + 100} deal={{ ...p, id: p.id + 100 }} />)}
+                        {filteredDayDeals.map((p) => <DesignCard key={p.id} deal={p} />)}
                     </div>
                     <div className="hd-view-all-wrapper">
                         <Link to="/deals-listing" className="hd-blue-btn-large">View All Deals</Link>
@@ -352,8 +426,7 @@ const Home = () => {
                     </div>
 
                     <div className="hd-product-slider-row" ref={bestDealsScrollRef}>
-                        {bestDeals.map((p) => <DesignCard key={p.id} deal={p} />)}
-                        {bestDeals.map(p => <DesignCard key={p.id + 100} deal={{ ...p, id: p.id + 100 }} />)}
+                        {filteredBestDeals.map((p) => <DesignCard key={p.id} deal={p} />)}
                     </div>
 
                     <div className="hd-view-all-best">
@@ -395,16 +468,18 @@ const Home = () => {
                             </div>
                             <h2 className="hd-top-stores-main-h2">Top Stores For You</h2>
                         </div>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button className="hd-nav-btn-new"><ArrowLeft strokeWidth={3} size={24} /></button>
-                            <button className="hd-nav-btn-new"><ArrowRight strokeWidth={3} size={24} /></button>
+                        <div className="hd-deals-nav-btns">
+                            <button className="hd-nav-btn-new" onClick={() => scrollStores('left')}><ArrowLeft strokeWidth={3} size={24} /></button>
+                            <button className="hd-nav-btn-new" onClick={() => scrollStores('right')}><ArrowRight strokeWidth={3} size={24} /></button>
                         </div>
                     </div>
 
-                    <div className="hd-stores-row hd-stores-grid">
-                        {storesWithStats.map((s, i) => (
-                            <StoreCard key={i} store={s} />
-                        ))}
+                    <div className="hd-stores-slider-container" ref={storesScrollRef}>
+                        <div className="hd-stores-row hd-stores-grid">
+                            {storesWithStats.map((s, i) => (
+                                <StoreCard key={i} store={s} />
+                            ))}
+                        </div>
                     </div>
                 </section>
 
@@ -426,8 +501,7 @@ const Home = () => {
                     </div>
 
                     <div className="hd-product-slider-row" ref={trendingDealsScrollRef}>
-                        {trendingDeals.map((p) => <DesignCard key={p.id} deal={p} />)}
-                        {trendingDeals.map(p => <DesignCard key={p.id + 100} deal={{ ...p, id: p.id + 100 }} />)}
+                        {filteredTrendingDeals.map((p) => <DesignCard key={p.id} deal={p} />)}
                     </div>
                 </section>
 

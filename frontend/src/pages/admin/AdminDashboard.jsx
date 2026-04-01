@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Users,
     Store,
@@ -36,6 +36,28 @@ const AdminDashboard = () => {
         { name: 'Bimal', store: 'Bimal Gadgets', date: 'May 12', status: 'Approved', email: 'bimal@gadgets.lk', phone: '+94 71 333 4444', city: 'Kandy' },
         { name: 'Nuwan', store: 'Nuwan Tech', date: 'May 15', status: 'Pending', email: 'nuwan@tech.lk', phone: '+94 76 555 6666', city: 'Galle' }
     ]);
+
+    const [homeRequests, setHomeRequests] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('hodama_store_requests_v1') || '[]');
+        } catch (e) {
+            return [];
+        }
+    });
+
+    // Auto-update home requests if storage changes (multi-tab support)
+    useEffect(() => {
+        const syncRequests = () => {
+            try {
+                const updated = JSON.parse(localStorage.getItem('hodama_store_requests_v1') || '[]');
+                setHomeRequests(Array.isArray(updated) ? updated : []);
+            } catch (e) {
+                setHomeRequests([]);
+            }
+        };
+        window.addEventListener('storage', syncRequests);
+        return () => window.removeEventListener('storage', syncRequests);
+    }, []);
     // Mock Data for statistics
     const stats = [
         { label: 'Total Users', value: '1,250', trend: '+12%', isUp: true, icon: <Users size={24} />, color: '#143ae6' },
@@ -94,6 +116,27 @@ const AdminDashboard = () => {
 
     const handleApproveClient = (name) => {
         setLocalClients(prev => prev.map(s => s.name === name ? { ...s, status: 'Approved' } : s));
+    };
+
+    const handleApproveStoreHome = (email) => {
+        // 1. Update the request status
+        const updatedRequests = homeRequests.map(r => r.ownerEmail === email ? { ...r, status: 'Approved' } : r);
+        setHomeRequests(updatedRequests);
+        localStorage.setItem('hodama_store_requests_v1', JSON.stringify(updatedRequests));
+
+        // 2. Update the store status in the global list
+        const storedStores = JSON.parse(localStorage.getItem('hodama_all_stores_v1') || '[]');
+        const updatedStores = storedStores.map(s => s.ownerEmail === email ? { ...s, status: 'Approved' } : s);
+        localStorage.setItem('hodama_all_stores_v1', JSON.stringify(updatedStores));
+
+        // 3. Update the client profile status
+        const savedUser = JSON.parse(localStorage.getItem('hodama_client_user_v1') || '{}');
+        if (savedUser.email === email) {
+            savedUser.homeRequestStatus = 'Approved';
+            localStorage.setItem('hodama_client_user_v1', JSON.stringify(savedUser));
+        }
+
+        alert('Store approved for Home Page listing!');
     };
 
     const handleExport = () => {
@@ -262,6 +305,37 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="adash-right-column">
+                    {/* 11. Home Page Store Listing Requests (Summary View) */}
+                    <div className="adash-card">
+                        <div className="adash-card-header">
+                            <h3 className="adash-card-title">
+                                <Store size={20} color="#143ae6" /> Home Requests
+                                {homeRequests.filter(r => r?.status === 'Pending').length > 0 && 
+                                    <span className="adash-badge-num">
+                                        {homeRequests.filter(r => r?.status === 'Pending').length}
+                                    </span>
+                                }
+                            </h3>
+                            <button className="adash-card-link" onClick={() => navigate('/admin/home-requests')}>View All</button>
+                        </div>
+                        <div className="adash-client-list">
+                            {(!homeRequests || homeRequests.filter(r => r?.status === 'Pending').length === 0) ? (
+                                <p style={{ padding: '10px 0', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>No new home page requests</p>
+                            ) : (
+                                homeRequests.filter(r => r?.status === 'Pending').slice(0, 3).map((req, idx) => (
+                                    <div key={idx || req.ownerEmail} className="adash-client-item">
+                                        <div className="adash-client-info">
+                                            <h4>{req?.name || 'Untitled Store'}</h4>
+                                            <p>{req?.category || 'General'}</p>
+                                        </div>
+                                        <div className="adash-client-actions">
+                                            <button className="adash-btn-approve" onClick={() => handleApproveStoreHome(req.ownerEmail)}>Approve</button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
                     {/* 10. Notifications Section */}
                     <div className="adash-card adash-sticky-card">
                         <div className="adash-card-header">
@@ -350,6 +424,8 @@ const AdminDashboard = () => {
                             ))}
                         </div>
                     </div>
+
+
                 </div>
             </div>
 

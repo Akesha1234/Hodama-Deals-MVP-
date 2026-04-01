@@ -1,5 +1,16 @@
 import React from 'react';
-import { Star, Sparkles, Tag, Scissors, Utensils, Hotel, Shirt, ShoppingCart } from 'lucide-react';
+import { 
+    Star, 
+    Sparkles, 
+    Tag, 
+    Scissors, 
+    Utensils, 
+    Hotel, 
+    Shirt, 
+    ShoppingCart,
+    CheckCircle2,
+    Info
+} from 'lucide-react';
 import './StoreCard.css';
 
 const StoreCard = ({ store }) => {
@@ -86,6 +97,14 @@ const StoreCard = ({ store }) => {
                 <div className="hd-store-card-rating">
                     <Star size={12} fill="#facc15" color="#facc15" />
                     <span>{store.rating}</span>
+                    {store.status === 'Approved' || store.status === 'Active' ? (
+                        <CheckCircle2 size={14} color="#10b981" title="Verified by Hodama Deals" />
+                    ) : store.isClaimed ? (
+                        <div className="hd-claimed-info" title="Rating claimed by owner">
+                            <Info size={10} />
+                            <span>Claimed</span>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </a>

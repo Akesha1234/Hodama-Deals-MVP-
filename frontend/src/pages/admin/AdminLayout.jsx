@@ -23,7 +23,8 @@ import {
     Truck,
     MapPin,
     Paintbrush,
-    LayoutGrid
+    LayoutGrid,
+    Home
 } from 'lucide-react';
 import './AdminLayout.css';
 
@@ -35,10 +36,12 @@ const AdminLayout = () => {
 
     const navItems = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
+        { name: 'Home Requests', path: '/admin/home-requests', icon: <Home size={20} /> },
         { name: 'Manage Users', path: '/admin/users', icon: <Users size={20} /> },
         { name: 'Manage Partners', path: '/admin/clients', icon: <Store size={20} /> },
         { name: 'Manage Deals', path: '/admin/manage-deals', icon: <Package size={20} /> },
         { name: 'Manage Categories', path: '/admin/categories', icon: <LayoutGrid size={20} /> },
+        { name: 'Banner Promotions', path: '/admin/banners', icon: <ShoppingBag size={20} /> },
         { name: 'Design Requests', path: '/admin/design-requests', icon: <Paintbrush size={20} /> },
         { name: 'Customer Support', path: '/admin/support', icon: <Headphones size={20} /> },
         { name: 'Reports', path: '/admin/reports', icon: <BarChart3 size={20} /> },

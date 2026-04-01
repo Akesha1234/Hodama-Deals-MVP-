@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -7,68 +8,133 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check if there is a logged-in user in localStorage
+        // Check if there is a logged-in user session
         const storedUser = localStorage.getItem('hd_current_user');
-        if (storedUser) {
+        const token = localStorage.getItem('hd_auth_token');
+        if (storedUser && token) {
             setUser(JSON.parse(storedUser));
+        } else {
+            // Clear stale state if token is missing
+            localStorage.removeItem('hd_current_user');
         }
         setLoading(false);
     }, []);
 
-    // Registration Mock
-    const register = (userData) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const users = JSON.parse(localStorage.getItem('hd_users') || '[]');
-
-                // Check if email already exists
-                if (users.find(u => u.email === userData.email)) {
-                    reject(new Error('Email already registered!'));
-                    return;
-                }
-
-                // Append new user
-                users.push(userData);
-                localStorage.setItem('hd_users', JSON.stringify(users));
-
-                // Auto login
-                const { password, ...userSession } = userData;
-                localStorage.setItem('hd_current_user', JSON.stringify(userSession));
-                setUser(userSession);
-
-                resolve(userData);
-            }, 1000);
-        });
+    // Real Backend Registration
+    const register = async (userData) => {
+        try {
+            const response = await api.post('/auth/register', userData);
+            return response.data;
+        } catch (error) {
+            // Throw specific error message from the backend if available
+            const msg = error.response?.data?.message || 'Registration failed.';
+            throw new Error(msg);
+        }
     };
 
-    // Login Mock
-    const login = (email, password) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const users = JSON.parse(localStorage.getItem('hd_users') || '[]');
-                const foundUser = users.find(u => u.email === email && u.password === password);
+    // Real Backend Login
+    const login = async (email, password) => {
+        try {
+            const response = await api.post('/auth/login', { email, password });
 
-                if (foundUser) {
-                    // Save session
-                    const { password, ...userSession } = foundUser; // Don't store password in session
-                    localStorage.setItem('hd_current_user', JSON.stringify(userSession));
-                    setUser(userSession);
-                    resolve(userSession);
-                } else {
-                    reject(new Error('Invalid email or password!'));
-                }
-            }, 1000);
-        });
+            const { token, user: userSession } = response.data;
+
+            // Save session
+            localStorage.setItem('hd_auth_token', token);
+            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            setUser(userSession);
+
+            return userSession;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Invalid email or password!';
+            throw new Error(msg);
+        }
     };
 
     // Logout
     const logout = () => {
+        localStorage.removeItem('hd_auth_token');
         localStorage.removeItem('hd_current_user');
         setUser(null);
     };
 
+    // Google Login
+    const loginWithGoogle = async (googleData) => {
+        try {
+            const response = await api.post('/auth/google', googleData);
+            const { token, user: userSession } = response.data;
+
+            localStorage.setItem('hd_auth_token', token);
+            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            setUser(userSession);
+            return userSession;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Google Login failed!';
+            throw new Error(msg);
+        }
+    };
+
+    // Facebook Login
+    const loginWithFacebook = async (facebookData) => {
+        try {
+            const response = await api.post('/auth/facebook', facebookData);
+            const { token, user: userSession } = response.data;
+
+            localStorage.setItem('hd_auth_token', token);
+            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            setUser(userSession);
+            return userSession;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Facebook Login failed!';
+            throw new Error(msg);
+        }
+    };
+
+    // Upgrade to Seller
+    const becomeSeller = async (sellerData) => {
+        try {
+            const response = await api.put('/auth/become-seller', sellerData);
+            const { token, user: userSession } = response.data;
+
+            localStorage.setItem('hd_auth_token', token);
+            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            setUser(userSession);
+            return userSession;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Failed to upgrade to seller!';
+            throw new Error(msg);
+        }
+    };
+
+    // Send Login OTP
+    const sendLoginOTP = async (email) => {
+        try {
+            const response = await api.post('/auth/send-login-otp', { email });
+            return response.data;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Failed to send login code!';
+            throw new Error(msg);
+        }
+    };
+
+    // Verify Login OTP
+    const verifyLoginOTP = async (email, otp) => {
+        try {
+            const response = await api.post('/auth/verify-login-otp', { email, otp });
+            const { token, user: userSession } = response.data;
+
+            localStorage.setItem('hd_auth_token', token);
+            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            setUser(userSession);
+            return userSession;
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Invalid or expired code!';
+            throw new Error(msg);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, loginWithGoogle, loginWithFacebook, becomeSeller, sendLoginOTP, verifyLoginOTP, loading }}>
             {children}
         </AuthContext.Provider>
     );

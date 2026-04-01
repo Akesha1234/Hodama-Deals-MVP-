@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard,
-    Package,
-    ShoppingBag,
+    Tag,
     User,
     LogOut,
     Bell,
@@ -14,9 +13,10 @@ import {
     Home,
     Check,
     CheckCheck,
-    AlertTriangle,
+    Clock,
+    TrendingUp,
+    CheckCircle2,
     Info,
-    Truck,
     ChevronRight,
     Circle
 } from 'lucide-react';
@@ -32,52 +32,52 @@ const ClientNotifications = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [activeFilter, setActiveFilter] = useState('All');
 
-    // Mock Notifications Data
+    // Mock Notifications Data - Rebranded for Deal Metrics (No Orders/Delivery)
     const [notifications, setNotifications] = useState([
         {
             id: 1,
-            type: 'Orders',
-            title: 'New Order Received',
-            message: 'Order #ORD12345 has been placed by Nimal Perera.',
+            type: 'Performance',
+            title: 'Deal Click Spike!',
+            message: 'Your deal "Smart Watch Series 8" has received 50+ clicks in the last hour.',
             time: '2 minutes ago',
             isRead: false,
-            actionText: 'View Order',
-            actionLink: '/client/orders',
-            icon: ShoppingBag,
+            actionText: 'View Stats',
+            actionLink: '/client/dashboard',
+            icon: TrendingUp,
             color: 'blue'
         },
         {
             id: 2,
             type: 'Alerts',
-            title: 'Low Stock Alert',
-            message: 'Wireless Headphones is running low on stock (Only 2 left).',
+            title: 'Approval Pending',
+            message: 'Your new deal submission "Organic Tea Hamper" is currently being reviewed by admin.',
             time: '1 hour ago',
             isRead: false,
-            actionText: 'Update Stock',
+            actionText: 'Manage Deals',
             actionLink: '/client/manage-deals',
-            icon: AlertTriangle,
+            icon: Clock,
             color: 'yellow'
         },
         {
             id: 3,
-            type: 'Orders',
-            title: 'Order Delivered',
-            message: 'Order #ORD12340 has been successfully delivered.',
+            type: 'Performance',
+            title: 'Trending Deal',
+            message: 'Congratulations! Your deal "Summer Sunglasses Collection" is currently trending on the homepage.',
             time: 'Yesterday at 3:45 PM',
             isRead: true,
-            actionText: 'View Details',
-            actionLink: '/client/orders',
-            icon: Truck,
+            actionText: 'View Dashboard',
+            actionLink: '/client/dashboard',
+            icon: CheckCircle2,
             color: 'green'
         },
         {
             id: 4,
-            type: 'Products',
-            title: 'Product Approved',
-            message: 'Your product "Smart Watch Series 8" has been approved and is now live.',
+            type: 'Deals',
+            title: 'Deal Approved',
+            message: 'Your deal "Professional DSLR Camera" has been approved and is now live for customers.',
             time: 'Yesterday at 1:20 PM',
             isRead: true,
-            actionText: 'View Product',
+            actionText: 'View Deal',
             actionLink: '/client/manage-deals',
             icon: Check,
             color: 'purple'
@@ -85,8 +85,8 @@ const ClientNotifications = () => {
         {
             id: 5,
             type: 'System',
-            title: 'System Maintenance',
-            message: 'Scheduled maintenance will occur on March 15th from 2:00 AM to 4:00 AM.',
+            title: 'System Optimization',
+            message: 'We have optimized the Deal Dashboard for faster performance and better analytics.',
             time: '2 days ago',
             isRead: true,
             actionText: '',
@@ -115,7 +115,7 @@ const ClientNotifications = () => {
         setNotifications(notifications.filter(n => n.id !== id));
     };
 
-    const filters = ['All', 'Orders', 'Products', 'Alerts', 'System'];
+    const filters = ['All', 'Deals', 'Performance', 'Alerts', 'System'];
     const filteredNotifications = activeFilter === 'All'
         ? notifications
         : notifications.filter(n => n.type === activeFilter);
@@ -132,11 +132,18 @@ const ClientNotifications = () => {
 
                 <div className="dashboard-view-container notifications-scroll-container">
                     <div className="notifications-wrapper fade-in">
+                        
+                        {/* Breadcrumb */}
+                        <div className="mp-breadcrumb">
+                            <span onClick={() => navigate('/client/dashboard')}>Dashboard</span>
+                            <ChevronRight size={14} />
+                            <span className="current">Notifications</span>
+                        </div>
 
-                        {/* Header */}
+                        {/* Page Header */}
                         <div className="notif-page-header">
                             <div className="notif-header-info">
-                                <h1><Bell size={32} /> Notifications</h1>
+                                <h1><Bell size={28} /> Notifications</h1>
                                 <p>Stay updated with your store activities and important alerts.</p>
                                 {unreadCount > 0 && (
                                     <div className="notif-count-badge">You have {unreadCount} new notifications</div>

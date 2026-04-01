@@ -41,51 +41,35 @@ const AddDeals = () => {
     }, []);
 
     const [productName, setProductName] = useState('');
+    const [subtitle, setSubtitle] = useState('');
     const [category, setCategory] = useState('');
-    const [subCategory, setSubCategory] = useState('');
-    const [condition, setCondition] = useState('New');
     const [brand, setBrand] = useState('');
+    const [dealType, setDealType] = useState('');
 
     const [price, setPrice] = useState('');
     const [discountPrice, setDiscountPrice] = useState('');
     const [discountRatio, setDiscountRatio] = useState(0);
 
     const [stock, setStock] = useState('');
+    const [totalStock, setTotalStock] = useState('');
     const [availability, setAvailability] = useState('In Stock');
 
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
+    const [highlights, setHighlights] = useState('');
+    const [terms, setTerms] = useState('');
 
     const [images, setImages] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
+    const [cardThumbnail, setCardThumbnail] = useState(null);
+    const [cardThumbnailPreview, setCardThumbnailPreview] = useState(null);
+    const [customBadge, setCustomBadge] = useState('');
 
-    // Design Support Modal States
-    const [isDesignSupportOpen, setIsDesignSupportOpen] = useState(false);
-    const [designDetails, setDesignDetails] = useState('');
-    const [designFiles, setDesignFiles] = useState([]);
-
-    const handleDesignSupportSubmit = (e) => {
-        e.preventDefault();
-        const existingTickets = JSON.parse(localStorage.getItem('hodamaAdminSupportTickets_v3') || '[]');
-        const newTicket = {
-            id: 'TCK' + Math.floor(1000 + Math.random() * 9000),
-            user: user?.name || 'Client',
-            email: user?.email || 'client@hodamadeals.lk',
-            phone: 'N/A',
-            type: 'Design Team Support',
-            message: designDetails,
-            status: 'Open',
-            date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-            attachment: designFiles.length > 0 ? `${designFiles.length} file(s) attached` : null,
-            history: []
-        };
-        localStorage.setItem('hodamaAdminSupportTickets_v3', JSON.stringify([newTicket, ...existingTickets]));
-        
-        alert('Your design request has been sent to our team! We will handle the rest.');
-        setIsDesignSupportOpen(false);
-        setDesignDetails('');
-        setDesignFiles([]);
-    };
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [expiryDate, setExpiryDate] = useState('');
+    const [websiteUrl, setWebsiteUrl] = useState('');
+    const [businessPhone, setBusinessPhone] = useState('');
+    const [businessLogo, setBusinessLogo] = useState('');
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -134,7 +118,49 @@ const AddDeals = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert('Product published successfully! (Mock Action)');
+
+        // Calculate categorization logic
+        const start = new Date(startDate);
+        const expiry = new Date(expiryDate);
+        const diffDays = Math.ceil((expiry - start) / (1000 * 60 * 60 * 24));
+
+        const stockLeftValue = Number(stock) || 0;
+        const totalStockValue = Number(totalStock) || stockLeftValue || 0;
+
+        const newDeal = {
+            id: Date.now(),
+            name: productName,
+            subtitle,
+            price: discountPrice ? parseFloat(discountPrice).toLocaleString() : parseFloat(price).toLocaleString(),
+            oldPrice: discountPrice ? parseFloat(price).toLocaleString() : null,
+            img: cardThumbnailPreview || previewImages[0] || "/assets/images/placeholder_deal.png",
+            badge: customBadge || (discountRatio > 0 ? `${discountRatio}% OFF` : 'NEW'),
+            storeName: brand || user?.name || "Premium Store",
+            storeImg: businessLogo || (user?.email?.includes('spaceylon') ? "/assets/images/spaceylonLogo.png" : "/assets/images/luvLogo.png"),
+            rating: "0",
+            ratingCount: "0",
+            location: location || "Nationwide",
+            dealType: dealType || "OFFER",
+            category: category,
+            status: availability === 'Out of Stock' ? 'Expired' : (availability === 'Draft' ? 'Draft' : 'Active'),
+            availability: availability,
+            stockLeft: stockLeftValue,
+            totalStock: totalStockValue,
+            sellingFast: totalStockValue > 0 ? stockLeftValue / totalStockValue <= 0.35 : false,
+            views: Math.floor(Math.random() * 50), // Random starting views for mock testing
+            isDailyDeal: diffDays <= 1,
+            isMonthlyDeal: diffDays >= 28,
+            expiryDate: expiryDate,
+            websiteUrl: websiteUrl,
+            description: description,
+            highlights: highlights,
+            terms: terms
+        };
+
+        const existingDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+        localStorage.setItem('hodama_all_deals_v1', JSON.stringify([newDeal, ...existingDeals]));
+
+        alert('Deal published successfully! You can see it on the Homepage sections.');
         navigate('/client/manage-deals');
     };
 
@@ -163,46 +189,21 @@ const AddDeals = () => {
 
                         {/* 2. Page Header */}
                         <div className="ap-page-header">
-                            <div>
-                                <h1><Plus size={28} className="text-blue-500" /> Create New Deal</h1>
-                                <p>Fill the details below to publish your offer in Hodama Deals marketplace.</p>
+                            <div className="ap-header-title">
+                                <div className="ap-header-icon">
+                                    <Plus size={32} />
+                                </div>
+                                <div className="ap-header-text">
+                                    <h1>Add New Deal</h1>
+                                    <p>Fill the details below to publish your offer in Hodama Deals marketplace.</p>
+                                </div>
                             </div>
-                            <div className="ap-instructions">
-                                <AlertCircle size={16} className="text-blue-500" />
+                            <div className="ap-header-tip">
+                                <AlertCircle size={18} />
                                 <span>Add vibrant images to attract more deal clicks.</span>
                             </div>
                         </div>
 
-                        {/* Design Team Support CTA */}
-                        <div 
-                            className="ap-design-support-cta" 
-                            onClick={() => setIsDesignSupportOpen(true)}
-                            style={{ 
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px', 
-                                padding: '16px 24px', backgroundColor: '#f0f9ff', border: '1px dashed #3b82f6', 
-                                borderRadius: '12px', marginBottom: '25px', cursor: 'pointer',
-                                transition: 'all 0.2s ease', boxShadow: '0 2px 4px rgba(59,130,246,0.1)'
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e0f2fe'}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f9ff'}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{ backgroundColor: '#bfdbfe', padding: '12px', borderRadius: '50%', color: '#1d4ed8' }}>
-                                    <MessageSquare size={24} />
-                                </div>
-                                <div>
-                                    <h4 style={{ margin: '0 0 4px 0', color: '#1e3a8a', fontSize: '16px', fontWeight: '600' }}>
-                                        I need help managing my deals (Design Team Support)
-                                    </h4>
-                                    <p style={{ margin: 0, color: '#3b82f6', fontSize: '13px' }}>
-                                        Don't have time to create banners or fill forms? Send us your raw details and photos, and we'll design and publish it for you!
-                                    </p>
-                                </div>
-                            </div>
-                            <button style={{ backgroundColor: '#1d4ed8', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: '500', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                                Request Support
-                            </button>
-                        </div>
 
                         <form className="ap-form-container" onSubmit={handleSubmit}>
 
@@ -227,11 +228,57 @@ const AddDeals = () => {
                                             />
                                         </div>
                                         <div className="ap-form-group">
-                                            <label>Short Subtitle</label>
+                                            <label>Short Subtitle (Optional)</label>
                                             <input
                                                 type="text"
-                                                placeholder="e.g. Grab 8 crispy Peri Peri drumsticks for just LKR 2,600"
+                                                placeholder="e.g. Grab 8 drumsticks for You"
+                                                value={subtitle}
+                                                onChange={(e) => setSubtitle(e.target.value)}
                                             />
+                                        </div>
+                                        <div className="ap-form-group">
+                                            <label>Deal Card Thumbnail Image <span className="req">*</span></label>
+                                            <div className="ap-thumbnail-upload-box" style={{ 
+                                                border: '1px dashed #cbd5e1', 
+                                                padding: '16px', 
+                                                borderRadius: '8px', 
+                                                display: 'flex', 
+                                                flexDirection: 'column', 
+                                                alignItems: 'center',
+                                                gap: '10px',
+                                                backgroundColor: '#f8fafc'
+                                            }}>
+                                                {cardThumbnailPreview ? (
+                                                    <div style={{ position: 'relative', width: '120px', height: '120px' }}>
+                                                        <img src={cardThumbnailPreview} alt="Thumbnail Preview" style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }} />
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={() => { setCardThumbnail(null); setCardThumbnailPreview(null); }}
+                                                            style={{ position: 'absolute', top: -8, right: -8, backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
+                                                        >
+                                                            <X size={14} />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                                        <div style={{ backgroundColor: 'white', padding: '10px', borderRadius: '50%', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', color: '#3b82f6' }}><UploadCloud size={24} /></div>
+                                                        <span style={{ fontSize: '13px', color: '#64748b' }}>Upload Design Card Thumbnail</span>
+                                                        <input 
+                                                            type="file" 
+                                                            accept="image/*" 
+                                                            style={{ display: 'none' }}
+                                                            onChange={(e) => {
+                                                                const file = e.target.files[0];
+                                                                if (file) {
+                                                                    setCardThumbnail(file);
+                                                                    setCardThumbnailPreview(URL.createObjectURL(file));
+                                                                }
+                                                            }}
+                                                        />
+                                                    </label>
+                                                )}
+                                                <p style={{ margin: 0, fontSize: '11px', color: '#94a3b8' }}>This image appears on the homepage sliders.</p>
+                                            </div>
                                         </div>
                                         <div className="ap-form-row">
                                             <div className="ap-form-group">
@@ -240,7 +287,6 @@ const AddDeals = () => {
                                                     value={category}
                                                     onChange={(e) => {
                                                         setCategory(e.target.value);
-                                                        setSubCategory('');
                                                     }}
                                                     required
                                                 >
@@ -248,56 +294,28 @@ const AddDeals = () => {
                                                     {globalCategories.map(cat => (
                                                         <option key={cat.id} value={cat.name}>{cat.name}</option>
                                                     ))}
-                                                    <option value="Salon">Salon</option>
-                                                    <option value="Restaurant">Restaurant</option>
-                                                    <option value="Hotel">Hotel</option>
-                                                    <option value="Fitness">Fitness</option>
-                                                    <option value="Spa">Spa</option>
-                                                    <option value="Fashion">Fashion</option>
-                                                    <option value="Grocery">Grocery</option>
-                                                    <option value="Electronics">Electronics</option>
-                                                    <option value="Entertainment">Entertainment</option>
                                                     <option value="other">Other</option>
-                                                </select>
-                                            </div>
-                                            <div className="ap-form-group">
-                                                <label>Sub Category</label>
-                                                <select
-                                                    value={subCategory}
-                                                    onChange={(e) => setSubCategory(e.target.value)}
-                                                    disabled={!category || category === 'other'}
-                                                >
-                                                    <option value="">Select Sub Category</option>
-                                                    {category && category !== 'other' && globalCategories.find(c => c.name === category)?.subcategories?.map(sub => (
-                                                        <option key={sub} value={sub}>{sub}</option>
-                                                    ))}
                                                 </select>
                                             </div>
                                         </div>
                                         <div className="ap-form-row">
                                             <div className="ap-form-group">
-                                                <label>Business / Brand Name <span className="req">*</span></label>
+                                                <label>Business / Brand Name</label>
                                                 <input
                                                     type="text"
-                                                    placeholder="e.g. Spa Ceylon, Pizza Hut"
-                                                    required
+                                                    placeholder="e.g. Pizza Hut/ Spa Ceylon"
+                                                    value={brand}
+                                                    onChange={(e) => setBrand(e.target.value)}
                                                 />
                                             </div>
                                             <div className="ap-form-group">
                                                 <label>Deal Type</label>
-                                                <select>
+                                                <select value={dealType} onChange={(e) => setDealType(e.target.value)}>
                                                     <option value="">Select Deal Type</option>
-                                                    <option>Lunch Buffet Specials</option>
-                                                    <option>Buy 1 Get 1 (BOGO)</option>
-                                                    <option>Credit Card Offers</option>
-                                                    <option>Combo Deals</option>
-                                                    <option>High Tea Specials</option>
-                                                    <option>Early Bird Discounts</option>
-                                                    <option>Happy Hour</option>
-                                                    <option>Seasonal Sale</option>
-                                                    <option>Flash Deal</option>
-                                                    <option>Limited Time Offer</option>
-                                                    <option>Exclusive Web Discount</option>
+                                                    <option value="SALE">SALE</option>
+                                                    <option value="OFFER">OFFER</option>
+                                                    <option value="LIMITED OFFER">LIMITED OFFER</option>
+                                                    <option value="DISCOUNT">DISCOUNT</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -365,6 +383,8 @@ const AddDeals = () => {
                                                 className="ap-desc-area"
                                                 placeholder={"100% Natural ingredients\nAward-winning brand\n60-day money back guarantee"}
                                                 rows="4"
+                                                value={highlights}
+                                                onChange={(e) => setHighlights(e.target.value)}
                                             ></textarea>
                                         </div>
                                         <div className="ap-form-group">
@@ -373,6 +393,8 @@ const AddDeals = () => {
                                                 className="ap-desc-area"
                                                 placeholder="e.g. Valid for dine-in only. Cannot be combined with other offers. Present digital voucher at checkout."
                                                 rows="3"
+                                                value={terms}
+                                                onChange={(e) => setTerms(e.target.value)}
                                             ></textarea>
                                         </div>
                                     </div>
@@ -402,7 +424,7 @@ const AddDeals = () => {
                                             <label>Offer / Deal Price (LKR) <span className="req">*</span></label>
                                             <input
                                                 type="number"
-                                                placeholder="0.00"
+                                                placeholder="0.00 (Optional)"
                                                 value={discountPrice}
                                                 onChange={(e) => setDiscountPrice(e.target.value)}
                                             />
@@ -413,6 +435,16 @@ const AddDeals = () => {
                                                 <span className="calc-badge">{discountRatio}% OFF</span>
                                             </div>
                                         )}
+                                        <div className="ap-form-group">
+                                            <label>Custom Badge Text (Optional)</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. 50% OFF or NEW"
+                                                value={customBadge}
+                                                onChange={(e) => setCustomBadge(e.target.value)}
+                                            />
+                                            <p className="ap-helper-text mt-2">This will override the auto-calculated discount badge.</p>
+                                        </div>
                                         <div className="ap-form-group">
                                             <label>Coupon Code (Optional)</label>
                                             <input
@@ -433,7 +465,9 @@ const AddDeals = () => {
                                             <label>Business Website URL <span className="req">*</span></label>
                                             <input
                                                 type="url"
-                                                placeholder="https://spaceylon.com"
+                                                placeholder="https://pizzahut.com"
+                                                value={websiteUrl}
+                                                onChange={(e) => setWebsiteUrl(e.target.value)}
                                                 required
                                             />
                                             <p className="ap-helper-text mt-2">Users will be redirected here when they click "Visit Website".</p>
@@ -443,6 +477,8 @@ const AddDeals = () => {
                                             <input
                                                 type="tel"
                                                 placeholder="+94 11 234 5678"
+                                                value={businessPhone}
+                                                onChange={(e) => setBusinessPhone(e.target.value)}
                                             />
                                         </div>
                                         <div className="ap-form-group">
@@ -450,6 +486,8 @@ const AddDeals = () => {
                                             <input
                                                 type="url"
                                                 placeholder="https://example.com/logo.png"
+                                                value={businessLogo}
+                                                onChange={(e) => setBusinessLogo(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -460,6 +498,28 @@ const AddDeals = () => {
                                             <CheckCircle2 size={20} />
                                             <h3>Availability</h3>
                                         </div>
+                                        <div className="ap-form-group">
+                                            <label>Current Stock Quantity</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                placeholder="e.g. 100"
+                                                value={stock}
+                                                onChange={(e) => setStock(e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="ap-form-group">
+                                            <label>Total Stock</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                placeholder="e.g. 150"
+                                                value={totalStock}
+                                                onChange={(e) => setTotalStock(e.target.value)}
+                                            />
+                                        </div>
+
                                         <div className="ap-form-group">
                                             <label>Deal Status</label>
                                             <select
@@ -473,22 +533,13 @@ const AddDeals = () => {
                                         </div>
                                         <div className="ap-form-row">
                                             <div className="ap-form-group">
-                                                <label>Expiry Date</label>
-                                                <input type="date" />
+                                                <label>Start Date</label>
+                                                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                                             </div>
                                             <div className="ap-form-group">
-                                                <label>Available Hours</label>
-                                                <input type="text" placeholder="e.g. 9AM – 10PM" />
+                                                <label>Expiry Date</label>
+                                                <input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} required />
                                             </div>
-                                        </div>
-                                        <div className="ap-form-group">
-                                            <label>Stock / Quantity Available</label>
-                                            <input
-                                                type="number"
-                                                placeholder="e.g. 50"
-                                                value={stock}
-                                                onChange={(e) => setStock(e.target.value)}
-                                            />
                                         </div>
                                     </div>
 
@@ -499,23 +550,14 @@ const AddDeals = () => {
                                             <h3>Location</h3>
                                         </div>
                                         <div className="ap-form-group">
-                                            <label>City / District <span className="req">*</span></label>
-                                            <select
+                                            <label>City / Outlet / Delivery Area <span className="req">*</span></label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Colombo 03, Online Store, Island-wide"
                                                 value={location}
                                                 onChange={(e) => setLocation(e.target.value)}
                                                 required
-                                            >
-                                                <option value="">Select City</option>
-                                                <option value="Colombo">Colombo</option>
-                                                <option value="Gampaha">Gampaha</option>
-                                                <option value="Kandy">Kandy</option>
-                                                <option value="Galle">Galle</option>
-                                                <option value="Negombo">Negombo</option>
-                                                <option value="Matara">Matara</option>
-                                                <option value="Jaffna">Jaffna</option>
-                                                <option value="Anuradhapura">Anuradhapura</option>
-                                                <option value="Nationwide">Island-wide / Online</option>
-                                            </select>
+                                            />
                                         </div>
                                     </div>
 
@@ -540,66 +582,8 @@ const AddDeals = () => {
                 </div>
             </main>
 
-            {/* Design Support Modal */}
-            {isDesignSupportOpen && (
-                <div className="ap-modal-overlay" onClick={() => setIsDesignSupportOpen(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15,23,42,0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(4px)' }}>
-                    <div className="ap-modal-content" onClick={e => e.stopPropagation()} style={{ backgroundColor: 'white', padding: '32px', borderRadius: '16px', width: '550px', maxWidth: '95%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                            <h3 style={{ margin: 0, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '20px' }}>
-                                <div style={{ backgroundColor: '#eff6ff', padding: '8px', borderRadius: '8px', color: '#3b82f6' }}><MessageSquare size={22} /></div>
-                                Design Team Support
-                            </h3>
-                            <button onClick={() => setIsDesignSupportOpen(false)} style={{ background: '#f1f5f9', border: 'none', cursor: 'pointer', padding: '8px', borderRadius: '50%', color: '#64748b' }}><X size={20} /></button>
-                        </div>
-                        <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
-                            Skip the forms! Upload your raw photos, documents, and type in basic info (original price, discount, conditions). Our staff will professionally design the banners and publish the deal on your behalf.
-                        </p>
-                        <form onSubmit={handleDesignSupportSubmit}>
-                            <div style={{ marginBottom: '20px' }}>
-                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#334155' }}>Deal Details & Instructions</label>
-                                <textarea 
-                                    required
-                                    value={designDetails}
-                                    onChange={e => setDesignDetails(e.target.value)}
-                                    placeholder="E.g. I want to offer an exclusive 20% off on my Sunday Buffet. The regular price is Rs. 5000. This is valid till end of next month. Please make it look premium!"
-                                    style={{ width: '100%', height: '120px', padding: '14px', border: '1px solid #cbd5e1', borderRadius: '10px', resize: 'vertical', fontSize: '14px', color: '#334155', outline: 'none', transition: 'border-color 0.2s' }}
-                                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                                    onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
-                                />
-                            </div>
-                            <div style={{ marginBottom: '30px' }}>
-                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#334155' }}>Raw Images / Logos</label>
-                                <div style={{ border: '2px dashed #cbd5e1', padding: '30px 20px', textAlign: 'center', borderRadius: '10px', backgroundColor: '#f8fafc', transition: 'all 0.2s', cursor: 'pointer' }}
-                                     onMouseOver={(e) => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.backgroundColor = '#eff6ff'; }}
-                                     onMouseOut={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.backgroundColor = '#f8fafc'; }}>
-                                    <input 
-                                        type="file" 
-                                        multiple 
-                                        onChange={e => setDesignFiles(Array.from(e.target.files))}
-                                        style={{ display: 'none' }}
-                                        id="raw-files"
-                                    />
-                                    <label htmlFor="raw-files" style={{ cursor: 'pointer', color: '#3b82f6', fontWeight: '600', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
-                                        <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '50%', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}><UploadCloud size={28} /></div>
-                                        <span>Click to browse files (Photos, Logos, Docs)</span>
-                                    </label>
-                                    {designFiles.length > 0 && (
-                                        <div style={{ marginTop: '16px', fontSize: '14px', color: '#10b981', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                            <CheckCircle2 size={18} /> {designFiles.length} file(s) selected
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <button type="submit" style={{ width: '100%', padding: '16px', backgroundColor: '#1d4ed8', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '600', fontSize: '16px', cursor: 'pointer', display: 'flex', justifyContent: 'center', gap: '12px', alignItems: 'center', transition: 'background-color 0.2s' }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#1e3a8a'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = '#1d4ed8'}>
-                                Send Request to Admin Team
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
-        </div >
+
+        </div>
     );
 };
 

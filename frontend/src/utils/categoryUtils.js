@@ -1,58 +1,12 @@
 export const INITIAL_CATEGORIES = [
-    {
-        id: "electronics",
-        name: "Electronics",
-        icon: "Smartphone",
-        subcategories: ["Smartphones", "Feature Phones", "Tablets", "Smart Watches", "Cameras", "Gaming Consoles", "Headphones & Earbuds", "Speakers", "Power Banks", "Chargers & Cables", "TV & Smart TVs", "Projectors"]
-    },
-    {
-        id: "computers",
-        name: "Computers",
-        icon: "Laptop",
-        subcategories: ["Laptops", "Desktop Computers", "Monitors", "Keyboards", "Mouse", "Laptop Bags", "Hard Drives (HDD)", "SSD Storage", "USB Flash Drives", "Printers & Scanners", "Networking Devices", "Graphics Cards"]
-    },
-    {
-        id: "fashion",
-        name: "Fashion",
-        icon: "Shirt",
-        subcategories: ["T-Shirts", "Shirts", "Jeans", "Shorts", "Jackets", "Suits", "Shoes", "Sandals", "Dresses", "Tops", "Skirts", "Sarees", "Handbags", "Jewelry", "Boys Clothing", "Girls Clothing", "Kids Shoes", "School Uniforms"]
-    },
-    {
-        id: "homeLifestyle",
-        name: "Home & Lifestyle",
-        icon: "Home",
-        subcategories: ["Furniture", "Kitchen Appliances", "Cookware", "Home Decor", "Lighting", "Bedding & Mattresses", "Curtains", "Carpets & Rugs", "Storage & Organization", "Garden & Outdoor"]
-    },
-    {
-        id: "groceries",
-        name: "Groceries",
-        icon: "ShoppingBag",
-        subcategories: ["Fruits & Vegetables", "Rice & Grains", "Flour & Baking Ingredients", "Dairy Products", "Snacks & Biscuits", "Beverages", "Frozen Foods", "Spices & Seasonings", "Cooking Oils", "Instant Foods"]
-    },
-    {
-        id: "healthBeauty",
-        name: "Health & Beauty",
-        icon: "Sparkles",
-        subcategories: ["Skincare", "Makeup", "Hair Care", "Perfumes & Fragrances", "Personal Care", "Men's Grooming", "Beauty Tools", "Vitamins & Supplements"]
-    },
-    {
-        id: "sportsFitness",
-        name: "Sports & Fitness",
-        icon: "Dumbbell",
-        subcategories: ["Exercise Equipment", "Dumbbells & Weights", "Yoga Mats", "Fitness Trackers", "Sportswear", "Football", "Cricket Gear", "Badminton Equipment", "Cycling Gear", "Camping Equipment"]
-    },
-    {
-        id: "babyKids",
-        name: "Baby & Kids",
-        icon: "Baby",
-        subcategories: ["Baby Clothing", "Diapers & Wipes", "Baby Feeding Bottles", "Baby Toys", "Baby Skincare", "Strollers & Walkers", "Baby Furniture", "School Supplies"]
-    },
-    {
-        id: "automotive",
-        name: "Automotive",
-        icon: "Car",
-        subcategories: ["Car Accessories", "Motorcycle Accessories", "Car Electronics", "Car Care Products", "Engine Oils", "Tires & Wheels", "Car Tools", "Helmets"]
-    }
+    { id: "salon", name: "Salon", icon: "Scissors", subcategories: [] },
+    { id: "restaurant", name: "Restaurant", icon: "Utensils", subcategories: [] },
+    { id: "electronics", name: "Electronics", icon: "Smartphone", subcategories: [] },
+    { id: "hotel", name: "Hotel", icon: "Building2", subcategories: [] },
+    { id: "groceries", name: "Groceries", icon: "ShoppingBasket", subcategories: [] },
+    { id: "health-beauty", name: "Health & Beauty", icon: "Sparkles", subcategories: [] },
+    { id: "spa", name: "Spa", icon: "Wind", subcategories: [] },
+    { id: "fashion", name: "Fashion", icon: "Shirt", subcategories: [] }
 ];
 
 export const getStoredCategories = () => {

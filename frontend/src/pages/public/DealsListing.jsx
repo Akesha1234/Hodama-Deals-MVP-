@@ -75,10 +75,22 @@ const DealsListing = () => {
     ];
 
 
-    const [filteredDeals, setFilteredDeals] = useState(allDeals);
+    // ── LOCAL STORAGE DEALS ──
+    const [localDeals, setLocalDeals] = useState([]);
+    useEffect(() => {
+        const stored = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+        setLocalDeals(stored);
+    }, []);
+
+    const combinedAllDeals = React.useMemo(() => {
+        const pool = [...allDeals, ...localDeals];
+        return pool.filter(d => !d.status || d.status === 'Approved' || d.status === 'Active');
+    }, [localDeals]);
+
+    const [filteredDeals, setFilteredDeals] = useState(combinedAllDeals);
 
     useEffect(() => {
-        let result = allDeals.filter(deal => {
+        let result = combinedAllDeals.filter(deal => {
             const matchesSearch = (deal.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
                 (deal.storeName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
                 (deal.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());

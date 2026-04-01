@@ -32,6 +32,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import ClientSidebar from '../../components/layout/ClientSidebar';
 import ClientTopbar from '../../components/layout/ClientTopbar';
+import { getStoredCategories } from '../../utils/categoryUtils';
 import './ManageDeals.css';
 
 const ManageDeals = () => {
@@ -41,51 +42,57 @@ const ManageDeals = () => {
     // Layout State
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    // Design Requests State
-    const [designRequests, setDesignRequests] = useState([]);
+    const [products, setProducts] = useState([]);
+
     useEffect(() => {
-        const tickets = JSON.parse(localStorage.getItem('hodamaAdminSupportTickets_v3') || '[]');
-        const myRequests = tickets.filter(t => t.type === 'Design Team Support' && t.user === (user?.name || 'Client'));
-        setDesignRequests(myRequests);
-    }, [user]);
+        // Load combined deals from localStorage
+        const fetchDeals = () => {
+            const storedDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+            
+            // Map the storage format to the UI format if necessary
+            const mappedDeals = storedDeals.map(d => ({
+                ...d,
+                id: d.id.toString(),
+                image: d.img || d.image || "/assets/images/placeholder_deal.png",
+                originalPrice: d.oldPrice ? parseInt(d.oldPrice.toString().replace(/[^0-9]/g, '')) : 0,
+                price: parseInt(d.price.toString().replace(/[^0-9]/g, '')),
+                status: d.status || "Active",
+                views: d.views || 0
+            }));
 
-    // MOCK DATA INITIAL STATE
-    const initialProducts = [
-        {
-            id: "D101",
-            name: "Apple iPhone 14 Pro Max 256GB - 20% OFF Deal",
-            category: "electronics",
-            subCategory: "smartphones",
-            price: 295000,
-            originalPrice: 310000,
-            views: 1250,
-            status: "Active",
-            image: "https://images.unsplash.com/photo-1695048133142-1a20a5bf616a?w=100",
-            brand: "Apple",
-            condition: "New",
-            description: "Genuine Apple iPhone offer. Grab at the physical store.",
-            province: "Colombo",
-            city: "Colombo 03"
-        },
-        {
-            id: "D102",
-            name: "Sony WH-1000XM4 Noise Canceling Headphones Offer",
-            category: "electronics",
-            subCategory: "headphones",
-            price: 65000,
-            originalPrice: 68000,
-            views: 450,
-            status: "Active",
-            image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=100",
-            brand: "Sony",
-            condition: "New",
-            description: "Industry leading noise cancellation with exclusive discount.",
-            province: "Gampaha",
-            city: "Negombo"
-        }
-    ];
+            // Include initial mock products if needed, but for persistence we focus on storage
+            setProducts([...mappedDeals]);
+        };
 
-    const [products, setProducts] = useState(initialProducts);
+        fetchDeals();
+        // Listen for storage changes in other tabs
+        window.addEventListener('storage', fetchDeals);
+        return () => window.removeEventListener('storage', fetchDeals);
+    }, []);
+
+    // Sync state to localStorage whenever products change locally
+    const updateStorage = (updatedProducts) => {
+        const storedDeals = JSON.parse(localStorage.getItem('hodama_all_deals_v1') || '[]');
+        
+        // Re-map back to the storage format expected by Home/Listing
+        const finalDeals = updatedProducts.map(p => {
+            const original = storedDeals.find(d => d.id.toString() === p.id.toString()) || {};
+            return {
+                ...original,
+                id: p.id,
+                name: p.name,
+                category: p.category,
+                price: p.price.toLocaleString(),
+                oldPrice: p.originalPrice > 0 ? p.originalPrice.toLocaleString() : null,
+                img: p.image,
+                status: p.status,
+                views: p.views
+            };
+        });
+
+        localStorage.setItem('hodama_all_deals_v1', JSON.stringify(finalDeals));
+        setProducts(updatedProducts);
+    };
 
     // Filter & Search States
     const [searchTerm, setSearchTerm] = useState('');
@@ -94,6 +101,11 @@ const ManageDeals = () => {
     const [statusFilter, setStatusFilter] = useState('All');
     const [sortBy, setSortBy] = useState('Latest');
     const [selectedProducts, setSelectedProducts] = useState([]);
+
+    const [globalCategories, setGlobalCategories] = useState([]);
+    useEffect(() => {
+        setGlobalCategories(getStoredCategories());
+    }, []);
 
     // Category display helper mapping
     const categoryNames = {
@@ -106,6 +118,10 @@ const ManageDeals = () => {
         'sportsFitness': 'Sports & Fitness',
         'babyKids': 'Baby & Kids',
         'automotive': 'Automotive',
+        'salon': 'Salon',
+        'restaurant': 'Restaurant',
+        'hotel': 'Hotel',
+        'spa': 'Spa',
         'other': 'Other'
     };
 
@@ -121,22 +137,24 @@ const ManageDeals = () => {
     // Derived State: Filtered & Sorted Products
     const filteredProducts = useMemo(() => {
         let result = products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.id.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = (product.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (product.id || '').toString().toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
-            const matchesSubCategory = subCategoryFilter === 'All' || product.subCategory === subCategoryFilter;
             const matchesStatus = statusFilter === 'All' || product.status === statusFilter;
-            return matchesSearch && matchesCategory && matchesSubCategory && matchesStatus;
+            return matchesSearch && matchesCategory && matchesStatus;
         });
 
         if (sortBy === 'PriceLow') {
             result.sort((a, b) => a.price - b.price);
         } else if (sortBy === 'PriceHigh') {
             result.sort((a, b) => b.price - a.price);
+        } else if (sortBy === 'Views') {
+            result.sort((a, b) => (b.views || 0) - (a.views || 0));
+        } else if (sortBy === 'Latest') {
+            result.sort((a, b) => b.id - a.id);
         }
-        // 'Latest' and 'BestSelling' can be mock sorted normally (default order here)
         return result;
-    }, [products, searchTerm, categoryFilter, subCategoryFilter, statusFilter, sortBy]);
+    }, [products, searchTerm, categoryFilter, statusFilter, sortBy]);
 
     // Statistics
     const totalProducts = products.length;
@@ -164,18 +182,21 @@ const ManageDeals = () => {
         if (selectedProducts.length === 0) return;
         if (action === 'Delete') {
             if (window.confirm(`Are you sure you want to delete ${selectedProducts.length} items?`)) {
-                setProducts(products.filter(p => !selectedProducts.includes(p.id)));
+                const updated = products.filter(p => !selectedProducts.includes(p.id));
+                updateStorage(updated);
                 setSelectedProducts([]);
             }
         } else if (action === 'Disable') {
-            setProducts(products.map(p => selectedProducts.includes(p.id) ? { ...p, status: 'Disabled' } : p));
+            const updated = products.map(p => selectedProducts.includes(p.id) ? { ...p, status: 'Disabled' } : p);
+            updateStorage(updated);
             setSelectedProducts([]);
         }
     };
 
     const handleDelete = (id) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            setProducts(products.filter(p => p.id !== id));
+        if (window.confirm('Are you sure you want to delete this deal?')) {
+            const updated = products.filter(p => p.id !== id);
+            updateStorage(updated);
         }
     };
 
@@ -205,9 +226,10 @@ const ManageDeals = () => {
 
     const handleEditSave = (e) => {
         e.preventDefault();
-        setProducts(products.map(p => p.id === currentProduct.id ? currentProduct : p));
+        const updated = products.map(p => p.id === currentProduct.id ? currentProduct : p);
+        updateStorage(updated);
         closeModals();
-        alert('Product updated successfully!');
+        alert('Deal updated successfully!');
     };
 
     return (
@@ -265,41 +287,7 @@ const ManageDeals = () => {
                             </div>
                         </div>
 
-                        {/* Design Requests Section */}
-                        {designRequests.length > 0 && (
-                            <div className="mp-design-requests-section" style={{ marginBottom: '30px', backgroundColor: '#e0e7ff', padding: '24px', borderRadius: '16px', border: '1px solid #c7d2fe', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                    <h3 style={{ margin: 0, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', fontWeight: '600' }}>
-                                        <div style={{ backgroundColor: '#bfdbfe', padding: '8px', borderRadius: '50%', color: '#1d4ed8' }}><MessageSquare size={20} /></div>
-                                        Your Graphic Design & Setup Requests
-                                    </h3>
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    {designRequests.map(req => (
-                                        <div key={req.id} style={{ backgroundColor: 'white', padding: '20px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #e2e8f0' }}>
-                                            <div style={{ flex: 1 }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                                                    <span style={{ backgroundColor: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: '600', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}><Tag size={14}/> {req.id}</span>
-                                                    <span style={{ fontSize: '12px', padding: '4px 10px', borderRadius: '12px', backgroundColor: req.status === 'Open' ? '#fef3c7' : req.status === 'Resolved' ? '#dcfce3' : '#dbeafe', color: req.status === 'Open' ? '#d97706' : req.status === 'Resolved' ? '#15803d' : '#1d4ed8', fontWeight: '600' }}>{req.status}</span>
-                                                    <span style={{ fontSize: '13px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}><Archive size={14} /> {req.date}</span>
-                                                </div>
-                                                <div style={{ backgroundColor: '#f8fafc', padding: '12px 16px', borderRadius: '8px', borderLeft: '4px solid #cbd5e1', marginBottom: '12px' }}>
-                                                    <p style={{ margin: 0, color: '#334155', fontSize: '14px', lineHeight: '1.6' }}>{req.message}</p>
-                                                </div>
-                                                {req.attachment && (
-                                                    <div style={{ fontSize: '13px', color: '#3b82f6', display: 'inline-flex', alignItems: 'center', gap: '6px', backgroundColor: '#eff6ff', padding: '6px 12px', borderRadius: '6px', fontWeight: '500' }}>
-                                                        <ImageIcon size={16} /> {req.attachment}
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div style={{ marginLeft: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-                                                <span style={{ fontSize: '13px', color: '#64748b', textAlign: 'right' }}>Admin is notified and <br/>is reviewing your submission.</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+
 
                         {/* 3. Search & Filters */}
                         <div className="mp-filters-section">
@@ -323,146 +311,10 @@ const ManageDeals = () => {
                                         }}
                                     >
                                         <option value="All">All Categories</option>
-                                        <option value="electronics">Electronics</option>
-                                        <option value="computers">Computers & Accessories</option>
-                                        <option value="fashion">Fashion</option>
-                                        <option value="homeLifestyle">Home & Lifestyle</option>
-                                        <option value="groceries">Groceries</option>
-                                        <option value="healthBeauty">Health & Beauty</option>
-                                        <option value="sportsFitness">Sports & Fitness</option>
-                                        <option value="babyKids">Baby & Kids</option>
-                                        <option value="automotive">Automotive</option>
+                                        {globalCategories.map(cat => (
+                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                        ))}
                                         <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                <div className="mp-filter-item">
-                                    <label>Sub Category</label>
-                                    <select
-                                        value={subCategoryFilter}
-                                        onChange={(e) => setSubCategoryFilter(e.target.value)}
-                                        disabled={categoryFilter === 'All' || categoryFilter === 'other'}
-                                    >
-                                        <option value="All">All Sub Categories</option>
-                                        {categoryFilter === 'electronics' && (
-                                            <>
-                                                <option value="smartphones">Smartphones</option>
-                                                <option value="feature-phones">Feature Phones</option>
-                                                <option value="tablets">Tablets</option>
-                                                <option value="watches">Smart Watches</option>
-                                                <option value="cameras">Cameras</option>
-                                                <option value="consoles">Gaming Consoles</option>
-                                                <option value="headphones">Headphones & Earbuds</option>
-                                                <option value="speakers">Speakers</option>
-                                                <option value="power-banks">Power Banks</option>
-                                                <option value="chargers">Chargers & Cables</option>
-                                                <option value="tvs">TV & Smart TVs</option>
-                                                <option value="projectors">Projectors</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'computers' && (
-                                            <>
-                                                <option value="laptops">Laptops</option>
-                                                <option value="desktops">Desktop Computers</option>
-                                                <option value="monitors">Monitors</option>
-                                                <option value="keyboards">Keyboards</option>
-                                                <option value="mouse">Mouse</option>
-                                                <option value="laptop-bags">Laptop Bags</option>
-                                                <option value="hdd">Hard Drives (HDD)</option>
-                                                <option value="ssd">SSD Storage</option>
-                                                <option value="usb">USB Flash Drives</option>
-                                                <option value="printers">Printers & Scanners</option>
-                                                <option value="networking">Networking Devices</option>
-                                                <option value="graphics-cards">Graphics Cards</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'fashion' && (
-                                            <>
-                                                <option disabled className="font-bold bg-gray-100">Men's Fashion</option>
-                                                <option value="mens-tshirts">T-Shirts</option>
-                                                <option value="mens-shirts">Shirts</option>
-                                                <option value="mens-jeans">Jeans</option>
-                                                <option value="mens-shorts">Shorts</option>
-                                                <option value="mens-jackets">Jackets</option>
-                                                <option value="mens-suits">Suits</option>
-                                                <option value="mens-shoes">Shoes</option>
-
-                                                <option disabled className="font-bold bg-gray-100 mt-2">Women's Fashion</option>
-                                                <option value="womens-dresses">Dresses</option>
-                                                <option value="womens-tops">Tops & T-Shirts</option>
-                                                <option value="womens-jeans">Jeans</option>
-                                                <option value="womens-skirts">Skirts</option>
-                                                <option value="womens-activewear">Activewear</option>
-                                                <option value="womens-shoes">Shoes</option>
-                                                <option value="womens-bags">Bags & Purses</option>
-
-                                                <option disabled className="font-bold bg-gray-100 mt-2">Accessories</option>
-                                                <option value="watches">Watches</option>
-                                                <option value="sunglasses">Sunglasses</option>
-                                                <option value="jewelry">Jewelry</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'homeLifestyle' && (
-                                            <>
-                                                <option value="furniture">Furniture</option>
-                                                <option value="bedding">Bedding</option>
-                                                <option value="bath">Bath</option>
-                                                <option value="home-decor">Home Decor</option>
-                                                <option value="lighting">Lighting</option>
-                                                <option value="kitchen">Kitchen & Dining</option>
-                                                <option value="appliances">Home Appliances</option>
-                                                <option value="tools">Tools & Home Improvement</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'groceries' && (
-                                            <>
-                                                <option value="fresh-produce">Fresh Produce</option>
-                                                <option value="dairy">Dairy & Eggs</option>
-                                                <option value="meat">Meat & Seafood</option>
-                                                <option value="bakery">Bakery</option>
-                                                <option value="pantry">Pantry Staples</option>
-                                                <option value="snacks">Snacks</option>
-                                                <option value="beverages">Beverages</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'healthBeauty' && (
-                                            <>
-                                                <option value="skincare">Skincare</option>
-                                                <option value="makeup">Makeup</option>
-                                                <option value="haircare">Hair Care</option>
-                                                <option value="bath-body">Bath & Body</option>
-                                                <option value="fragrances">Fragrances</option>
-                                                <option value="personal-care">Personal Care</option>
-                                                <option value="vitamins">Vitamins & Supplements</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'sportsFitness' && (
-                                            <>
-                                                <option value="exercise-equipment">Exercise Equipment</option>
-                                                <option value="activewear">Activewear</option>
-                                                <option value="sports-gear">Sports Gear</option>
-                                                <option value="outdoor-recreation">Outdoor Recreation</option>
-                                                <option value="supplements">Sports Supplements</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'babyKids' && (
-                                            <>
-                                                <option value="diapering">Diapering</option>
-                                                <option value="baby-gear">Baby Gear</option>
-                                                <option value="nursery">Nursery</option>
-                                                <option value="feeding">Feeding</option>
-                                                <option value="toys">Toys</option>
-                                                <option value="kids-clothing">Kids Clothing</option>
-                                            </>
-                                        )}
-                                        {categoryFilter === 'automotive' && (
-                                            <>
-                                                <option value="car-care">Car Care</option>
-                                                <option value="interior-accessories">Interior Accessories</option>
-                                                <option value="exterior-accessories">Exterior Accessories</option>
-                                                <option value="tools-equipment">Tools & Equipment</option>
-                                                <option value="motorcycle-accessories">Motorcycle Accessories</option>
-                                            </>
-                                        )}
                                     </select>
                                 </div>
                                 <div className="mp-filter-item">
@@ -481,7 +333,7 @@ const ManageDeals = () => {
                                         <option value="Latest">Latest Added</option>
                                         <option value="PriceLow">Price: Low to High</option>
                                         <option value="PriceHigh">Price: High to Low</option>
-                                        <option value="BestSelling">Best Selling</option>
+                                        <option value="Views">Most Viewed</option>
                                     </select>
                                 </div>
                                 <div className="mp-filter-item mp-filter-reset">
@@ -558,9 +410,11 @@ const ManageDeals = () => {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span className={`mp-badge active`}>
-                                                        <CheckCircle2 size={12} />
-                                                        Active
+                                                    <span className={`mp-badge ${product.status?.toLowerCase() || 'pending'}`}>
+                                                        {product.status === 'Approved' || product.status === 'Active' ? <CheckCircle2 size={12} /> : 
+                                                         product.status === 'Pending' ? <Clock size={12} /> : 
+                                                         <AlertTriangle size={12} />}
+                                                        {product.status || 'Pending'}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -572,10 +426,10 @@ const ManageDeals = () => {
                                                         >
                                                             <Edit2 size={16} />
                                                         </button>
-                                                        <button
+                                                         <button
                                                             className="mp-icon-btn"
-                                                            title="View Product"
-                                                            onClick={() => openViewModal(product)}
+                                                            title="View Deal Live"
+                                                            onClick={() => window.open(`/deal/${product.id}`, '_blank')}
                                                         >
                                                             <Eye size={16} />
                                                         </button>
@@ -651,7 +505,7 @@ const ManageDeals = () => {
                 <div className="mp-modal-overlay fade-in">
                     <div className="mp-modal-content mp-modal-wide">
                         <div className="mp-modal-header">
-                            <h3><Edit2 size={24} style={{ marginRight: '10px', verticalAlign: 'middle' }} /> Edit Product</h3>
+                            <h3><Edit2 size={24} style={{ marginRight: '10px', verticalAlign: 'middle' }} /> Edit Deal</h3>
                             <button className="mp-modal-close" onClick={closeModals}><X size={20} /></button>
                         </div>
                         <form onSubmit={handleEditSave}>
@@ -661,10 +515,10 @@ const ManageDeals = () => {
                                 <div className="mp-edit-section">
                                     <div className="mp-section-title">
                                         <Package size={20} />
-                                        <h4>Product Information</h4>
+                                        <h4>Deal Information</h4>
                                     </div>
                                     <div className="mp-form-group">
-                                        <label>Product Name</label>
+                                        <label>Deal Title</label>
                                         <input
                                             type="text"
                                             required
@@ -681,15 +535,9 @@ const ManageDeals = () => {
                                                 value={currentProduct.category}
                                                 onChange={(e) => setCurrentProduct({ ...currentProduct, category: e.target.value, subCategory: '' })}
                                             >
-                                                <option value="electronics">Electronics</option>
-                                                <option value="computers">Computers & Accessories</option>
-                                                <option value="fashion">Fashion</option>
-                                                <option value="homeLifestyle">Home & Lifestyle</option>
-                                                <option value="groceries">Groceries</option>
-                                                <option value="healthBeauty">Health & Beauty</option>
-                                                <option value="sportsFitness">Sports & Fitness</option>
-                                                <option value="babyKids">Baby & Kids</option>
-                                                <option value="automotive">Automotive</option>
+                                                {globalCategories.map(cat => (
+                                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                                ))}
                                                 <option value="other">Other</option>
                                             </select>
                                         </div>
@@ -825,7 +673,7 @@ const ManageDeals = () => {
                                         <h4>Detailed Information</h4>
                                     </div>
                                     <div className="mp-form-group">
-                                        <label>Product Description <span className="mp-req">*</span></label>
+                                        <label>Deal Description <span className="mp-req">*</span></label>
                                         <textarea
                                             className="mp-form-textarea"
                                             rows="6"
@@ -857,7 +705,7 @@ const ManageDeals = () => {
                                 <div className="mp-edit-section">
                                     <div className="mp-section-title">
                                         <ImageIcon size={20} />
-                                        <h4>Product Images <span className="mp-req">*</span></h4>
+                                        <h4>Deal Images <span className="mp-req">*</span></h4>
                                     </div>
                                     <p className="mp-helper-text" style={{ marginBottom: '15px' }}>Current featured image used for listings.</p>
                                     <div className="mp-edit-img-section" style={{ alignItems: 'flex-start' }}>

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ReCAPTCHA from "react-google-recaptcha";
 import './Register.css';
 
 const Register = () => {
@@ -21,7 +22,10 @@ const Register = () => {
     const { t } = useLanguage();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const initialRole = queryParams.get('role') === 'client' ? 'Business Account' : 'Buyer';
+    const initialRole = queryParams.get('role') === 'client' ? 'Client' : 'Buyer';
+
+    // Context methods
+    const { register } = useAuth();
 
     // Multi-step state
     const [step, setStep] = useState(1);
@@ -38,6 +42,7 @@ const Register = () => {
     const [newsletter, setNewsletter] = useState(false);
     const [helpManaging, setHelpManaging] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
 
     // Form data states
     const [firstName, setFirstName] = useState('');
@@ -65,9 +70,10 @@ const Register = () => {
 
     const handleEmailBlur = () => {
         if (!email) return;
-        const users = JSON.parse(localStorage.getItem('hd_users') || '[]');
-        if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-            setEmailError('This email is already registered.');
+        // Simple regex frontend validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setEmailError('Please enter a valid email address.');
         } else {
             setEmailError('');
         }
@@ -90,41 +96,60 @@ const Register = () => {
         setRegMessage(null);
 
         try {
-            const userData = {
-                role, firstName, lastName, email, phone,
-                businessName: role === 'Business Account' ? businessName : '',
-                businessType: role === 'Business Account' ? businessType : '',
-                category: role === 'Business Account' ? category : '',
-                websiteLink: role === 'Business Account' ? websiteLink : '',
-                newsletter,
-                helpManaging,
+            const fullName = role === 'Client' ? businessName.trim() : `${firstName.trim()} ${lastName.trim()}`.trim();
+            
+            const apiPayload = {
+                name: fullName,
+                email: email.trim(),
                 password,
-                name: role === 'Buyer' ? `${firstName} ${lastName}` : businessName,
-                createdAt: new Date().toISOString()
+                phone: phone.trim(),
+                role: role === 'Client' ? 'seller' : 'customer',
+                captchaToken,
             };
 
-            // Using mock registration similar to context register function if register context is missing
-            const users = JSON.parse(localStorage.getItem('hd_users') || '[]');
-            users.push({ ...userData, id: Date.now() });
-            localStorage.setItem('hd_users', JSON.stringify(users));
+            if (role === 'Client') {
+                apiPayload.sellerProfile = {
+                    businessName: businessName.trim(),
+                    businessType: businessType,
+                    category: category,
+                    websiteLink: websiteLink.trim()
+                };
+            }
 
-            // Auto login after registration
-            const { password: _, ...userSession } = userData;
-            localStorage.setItem('hd_current_user', JSON.stringify(userSession));
+            const result = await register(apiPayload);
 
             setIsLoading(false);
             setRegMessage({
                 type: 'success',
-                text: `Account created successfully! Redirecting...`
+                text: result.message || 'Account created successfully! Please log in.'
             });
 
             setTimeout(() => {
-                navigate(role === 'Business Account' ? '/client/dashboard' : '/');
-                window.location.reload(); // Simple way to force auth context reload after localstorage update
-            }, 1000);
+                navigate('/login');
+            }, 3000);
         } catch (error) {
             setIsLoading(false);
-            setRegMessage({ type: 'error', text: error.message || 'Registration failed' });
+            let errorMessage = 'Registration failed. Please try again.';
+            
+            // Comprehensive error extraction from backend response
+            if (error.response && error.response.data) {
+                const data = error.response.data;
+                
+                if (data.message) {
+                    errorMessage = data.message;
+                } else if (data.errors && Array.isArray(data.errors)) {
+                    errorMessage = data.errors.map(e => e.message || e).join(', ');
+                }
+                
+                // Add specific hint for reCAPTCHA if message includes it
+                if (errorMessage.toLowerCase().includes('recaptcha')) {
+                    errorMessage += ' — Please make sure you checked "I\'m not a robot".';
+                }
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            setRegMessage({ type: 'error', text: errorMessage });
         }
     };
 
@@ -242,7 +267,7 @@ const Register = () => {
                             )}
 
                             <form onSubmit={handleRegister} className="register-form-modern">
-                                {role === 'Business Account' ? (
+                                {role === 'Client' ? (
                                     <>
                                         <div className="input-block-labeled">
                                             <label>Business Name</label>
@@ -384,20 +409,13 @@ const Register = () => {
                                     )}
                                 </div>
 
-                                {/* Mock Captcha Section */}
-                                <div className="mock-captcha-container">
-                                    <div className="captcha-left">
-                                        <div className="checkbox-mock">
-                                            <input type="checkbox" id="captcha" />
-                                            <label htmlFor="captcha">I 'm not a robot</label>
-                                        </div>
-                                    </div>
-                                    <div className="captcha-right">
-                                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 2L4 5V11C4 16.03 7.41 20.72 12 22C16.59 20.72 20 16.03 20 11V5L12 2Z" stroke="#BD8B13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            <path d="M9 12L11 14L15 10" stroke="#BD8B13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
-                                    </div>
+                                {/* Official Google ReCAPTCHA */}
+                                <div className="recaptcha-wrapper-hd">
+                                    <ReCAPTCHA
+                                        sitekey="6LdXSZ8sAAAAAHbCUl6hOgaxb61rCByVWhMBpYwO"
+                                        onChange={(token) => setCaptchaToken(token)}
+                                        onExpired={() => setCaptchaToken(null)}
+                                    />
                                 </div>
 
                                 <div className="terms-check-group">
@@ -441,7 +459,7 @@ const Register = () => {
                                 <button
                                     type="submit"
                                     className="create-account-btn-major"
-                                    disabled={isLoading || (confirmPassword && password !== confirmPassword) || emailError}
+                                    disabled={isLoading || (confirmPassword && password !== confirmPassword) || emailError || !captchaToken}
                                 >
                                     {isLoading ? (
                                         <>

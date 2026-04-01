@@ -22,10 +22,12 @@ import {
     Mail,
     Store,
     Lock,
+    Contact,
     Eye,
     EyeOff,
     Home,
-    RefreshCw
+    RefreshCw,
+    TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -42,20 +44,47 @@ const ClientProfile = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [activeTab, setActiveTab] = useState('profile'); // For sidebar highlighting
 
-    const [user, setUser] = useState({
-        name: authUser?.name || 'Client User',
-        email: authUser?.email || 'client@hodamadeals.com',
-        phone: '077 123 4567',
-        role: 'Client',
-        storeName: 'Hodama Tech Store',
-        storeDescription: 'Your one-stop shop for all tech gadgets.',
-        storeCategory: 'Electronics',
-        address: 'Colombo',
-        city: 'Colombo',
-        joinedDate: '2026',
-        profilePic: null,
-        storeLogo: null
+    const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem('hodama_client_user_v1');
+        if (saved) return JSON.parse(saved);
+
+        return {
+            name: authUser?.name || 'Nethmi Fernando',
+            email: authUser?.email || 'nethmifdo7@gmail.com',
+            phone: '077 123 4567',
+            role: 'Client',
+            storeName: 'Cosmetics.lk',
+            storeDescription: 'Your one-stop shop for all beauty deals.',
+            storeCategory: 'Health & Beauty',
+            storeRating: '4.8',
+            storeLink: 'https://lk.spaceyfam.com/',
+            address: 'Colombo, Sri Lanka',
+            city: 'Colombo',
+            joinedDate: '2024',
+            profilePic: null,
+            storeLogo: null,
+            isHomeRequested: false, // New field for Home Page visibility request
+            homeRequestStatus: 'None' // None, Pending, Approved, Rejected
+        };
     });
+
+    // Calculate Live Stats
+    const stats = React.useMemo(() => {
+        const allDeals = JSON.parse(localStorage.getItem('hodama_deals_v1') || '[]');
+        // In a real app, we'd filter by client ID/email. Since this is a prototype:
+        const clientDeals = allDeals; 
+        
+        const activeDeals = clientDeals.filter(d => d.status === 'Active').length;
+        const totalViews = clientDeals.reduce((sum, d) => sum + (d.views || 0), 0);
+        const totalClicks = Math.floor(totalViews * 1.8); // Simulating clicks > views for demo if needed, or just sum
+        
+        return {
+            active: activeDeals,
+            views: totalViews > 1000 ? (totalViews / 1000).toFixed(1) + 'K' : totalViews,
+            rating: user.storeRating || '4.8',
+            clicks: totalClicks > 1000 ? (totalClicks / 1000).toFixed(1) + 'K' : totalClicks
+        };
+    }, [user.storeRating]);
 
     const [passwords, setPasswords] = useState({
         current: '',
@@ -106,6 +135,12 @@ const ClientProfile = () => {
     const handleImageUpload = (e, type) => {
         const file = e.target.files[0];
         if (file) {
+            // Check file size (2MB limit)
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Image is too large! Please choose an image smaller than 2MB.");
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setUser(prev => ({ ...prev, [type]: reader.result }));
@@ -114,9 +149,52 @@ const ClientProfile = () => {
         }
     };
 
+
+
     const handleSaveChanges = (e) => {
         e.preventDefault();
-        alert('Profile saved successfully!');
+
+        // 1. Save specific store info to global store list for Home Page
+        const storedStores = JSON.parse(localStorage.getItem('hodama_all_stores_v1') || '[]');
+        const updatedStores = [...storedStores];
+        const storeIdx = updatedStores.findIndex(s => s.ownerEmail === user.email);
+
+        const storeData = {
+            name: user.storeName,
+            img: user.storeLogo || "/assets/images/placeholder_store.png",
+            url: user.storeLink,
+            rating: user.storeRating || "0.0",
+            category: user.storeCategory,
+            ownerEmail: user.email,
+            isClaimed: true // New flag for the Hybrid approach
+        };
+
+        if (storeIdx > -1) {
+            updatedStores[storeIdx] = { ...updatedStores[storeIdx], ...storeData };
+        } else {
+            updatedStores.push(storeData);
+        }
+
+        localStorage.setItem('hodama_all_stores_v1', JSON.stringify(updatedStores));
+
+        // 1.1 Store actual home page request in a separate list for Admin
+        if (user.isHomeRequested) {
+            const requests = JSON.parse(localStorage.getItem('hodama_store_requests_v1') || '[]');
+            const reqIdx = requests.findIndex(r => r.ownerEmail === user.email);
+            const reqData = {
+                ...storeData,
+                requestDate: new Date().toLocaleDateString(),
+                status: user.homeRequestStatus || 'Pending'
+            };
+            if (reqIdx > -1) requests[reqIdx] = reqData;
+            else requests.push(reqData);
+            localStorage.setItem('hodama_store_requests_v1', JSON.stringify(requests));
+        }
+
+        // 2. Save current user state
+        localStorage.setItem('hodama_client_user_v1', JSON.stringify(user));
+
+        alert('Store profile saved successfully! Changes are now live.');
     };
 
     const handleUpdatePassword = (e) => {
@@ -143,14 +221,13 @@ const ClientProfile = () => {
                         {/* Breadcrumb & Header */}
                         <div className="profile-page-header">
                             <div className="header-info">
-                                <h1><User size={32} /> Client Profile</h1>
-                                <p>Manage your client account information and store details.</p>
+                                <h1><User size={28} className="title-icon" /> Profile & Store</h1>
+                                <p>Manage your account information and store details.</p>
                             </div>
                             <div className="header-actions">
-                                <button className="btn-secondary" onClick={() => navigate('/client/dashboard')}>Cancel</button>
-                                <button className="btn-primary" onClick={handleSaveChanges}>
-                                    <Save size={18} />
-                                    <span>Save Changes</span>
+                                <button className="btn-cancel" onClick={() => navigate('/client/dashboard')}>Cancel</button>
+                                <button className="btn-save-main" onClick={handleSaveChanges}>
+                                    Save Changes
                                 </button>
                             </div>
                         </div>
@@ -166,36 +243,44 @@ const ClientProfile = () => {
 
                                     <div className="summary-avatar-section">
                                         <div className="summary-avatar" onClick={() => profilePicRef.current.click()}>
-                                            <img src={user.profilePic || `https://ui-avatars.com/api/?name=${user.name}&background=f8c205&color=fff&size=120`} alt="Profile" />
-                                            <div className="avatar-edit-overlay">
-                                                <Camera size={20} />
+                                            <div className="avatar-circle-main">
+                                                {user.profilePic ? (
+                                                    <img src={user.profilePic} alt="Profile" />
+                                                ) : (
+                                                    <div className="avatar-initials-circle">
+                                                        {user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <div className="avatar-edit-overlay">
+                                                    <Camera size={20} />
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="file" ref={profilePicRef} hidden accept="image/*" onChange={(e) => handleImageUpload(e, 'profilePic')} />
 
                                         <h2 className="summary-name">{user.name}</h2>
                                         <div className="summary-store-badge">
-                                            <Store size={14} /> {user.storeName}
+                                            <ShoppingBag size={14} /> <span>{user.storeName || 'My Store'}</span>
                                         </div>
                                     </div>
 
                                     <div className="summary-details">
                                         <div className="detail-row">
-                                            <Mail size={16} />
+                                            <div className="icon-box"><Mail size={16} /></div>
                                             <span>{user.email}</span>
                                         </div>
                                         <div className="detail-row">
-                                            <Smartphone size={16} />
+                                            <div className="icon-box"><Smartphone size={16} /></div>
                                             <span>{user.phone}</span>
                                         </div>
                                         <div className="detail-row">
-                                            <MapPin size={16} />
-                                            <span>{user.city}, Sri Lanka</span>
+                                            <div className="icon-box"><MapPin size={16} /></div>
+                                            <span>{user.address}</span>
                                         </div>
                                     </div>
 
                                     <div className="summary-actions">
-                                        <button className="summary-btn btn-outline" onClick={() => profilePicRef.current.click()}>
+                                        <button className="summary-btn change-photo-btn" onClick={() => profilePicRef.current.click()}>
                                             <Camera size={16} /> Change Photo
                                         </button>
                                     </div>
@@ -207,31 +292,31 @@ const ClientProfile = () => {
 
                                     <div className="stats-mini-grid">
                                         <div className="stat-mini-box">
-                                            <div className="s-icon text-blue"><Package size={20} /></div>
+                                            <div className="s-icon s-bg-gray"><Package size={20} /></div>
                                             <div className="s-info">
-                                                <span className="s-val">85</span>
+                                                <span className="s-val">{stats.active.toString().padStart(2, '0')}</span>
                                                 <span className="s-lbl">Active Deals</span>
                                             </div>
                                         </div>
                                         <div className="stat-mini-box">
-                                            <div className="s-icon text-yellow"><Eye size={20} /></div>
+                                            <div className="s-icon s-bg-orange"><Eye size={20} /></div>
                                             <div className="s-info">
-                                                <span className="s-val">4.5K</span>
+                                                <span className="s-val">{stats.views}</span>
                                                 <span className="s-lbl">Deal Views</span>
                                             </div>
                                         </div>
                                         <div className="stat-mini-box">
-                                            <div className="s-icon text-green"><Store size={20} /></div>
+                                            <div className="s-icon s-bg-green"><Store size={20} /></div>
                                             <div className="s-info">
-                                                <span className="s-val">4.8</span>
+                                                <span className="s-val">{stats.rating}</span>
                                                 <span className="s-lbl">Rating</span>
                                             </div>
                                         </div>
                                         <div className="stat-mini-box">
-                                            <div className="s-icon text-purple"><LayoutDashboard size={20} /></div>
+                                            <div className="s-icon s-bg-purple"><LayoutDashboard size={20} /></div>
                                             <div className="s-info">
-                                                <span className="s-val">782</span>
-                                                <span className="s-lbl">Redirect Clicks</span>
+                                                <span className="s-val">{stats.clicks}</span>
+                                                <span className="s-lbl">Grab Clicks</span>
                                             </div>
                                         </div>
                                     </div>
@@ -283,6 +368,16 @@ const ClientProfile = () => {
                                                 </select>
                                             </div>
 
+                                            <div className="form-group flex-1">
+                                                <label>Store Ratings</label>
+                                                <input type="text" name="storeRating" value={user.storeRating} onChange={handleInputChange} placeholder="0.0" />
+                                            </div>
+
+                                            <div className="form-group flex-1">
+                                                <label>Store Link</label>
+                                                <input type="text" name="storeLink" value={user.storeLink} onChange={handleInputChange} placeholder="ex: https://lk.example.com/" />
+                                            </div>
+
                                             {user.storeCategory === 'Other' && (
                                                 <div className="form-group span-2" style={{ animation: 'fadeIn 0.3s ease' }}>
                                                     <label>Specify Store Category</label>
@@ -303,6 +398,8 @@ const ClientProfile = () => {
                                             </div>
                                         </div>
                                     </div>
+
+
 
                                     {/* 4. Contact Information Section */}
                                     <div className="profile-form-card">
@@ -347,8 +444,12 @@ const ClientProfile = () => {
 
                                     {/* Save Changes Bottom */}
                                     <div className="form-bottom-actions">
-                                        <button type="button" className="btn-outline" onClick={() => navigate('/client/dashboard')}>❌ Cancel</button>
-                                        <button type="submit" className="btn-primary">💾 Save Changes</button>
+                                        <button type="button" className="btn-cancel" onClick={() => navigate('/client/dashboard')}>
+                                            <X size={18} /> Cancel
+                                        </button>
+                                        <button type="submit" className="btn-save-bottom">
+                                            <Save size={18} /> Save Changes
+                                        </button>
                                     </div>
                                 </form>
 

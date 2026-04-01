@@ -412,7 +412,7 @@ const Header = () => {
                                         <div className="hd-profile-dropdown">
                                             <div className="hd-profile-dropdown__header">
                                                 <span className="hd-profile-dropdown__name">{user.name}</span>
-                                                <span className="hd-profile-dropdown__role">{user.role === 'Buyer' || user.role === 'User' ? 'User Account' : (user.role === 'Client' || user.role === 'Business Account' || user.role === 'Seller' || user.role === 'Partner' ? 'Business Account' : user.role)}</span>
+                                                <span className="hd-profile-dropdown__role">{user.role === 'User' || user.role === 'Buyer' ? 'User Account' : (user.role === 'Client' || user.role === 'Business Account' || user.role === 'Seller' || user.role === 'Partner' ? 'Business Account' : user.role)}</span>
                                             </div>
                                             {user.role === 'Business Account' || user.role === 'Client' || user.role === 'Seller' || user.role === 'Partner' ? (
                                                 <>
@@ -476,7 +476,7 @@ const Header = () => {
                             </div>
                             <div>
                                 <div className="hd-sidebar__profile-name">{user.name}</div>
-                                <div className="hd-sidebar__profile-role">{user.role === 'Buyer' || user.role === 'User' ? 'User Account' : (user.role === 'Client' || user.role === 'Business Account' || user.role === 'Seller' || user.role === 'Partner' ? 'Business Account' : user.role)}</div>
+                                <div className="hd-sidebar__profile-role">{user.role === 'User' || user.role === 'Buyer' ? 'User Account' : (user.role === 'Client' || user.role === 'Business Account' || user.role === 'Seller' || user.role === 'Partner' ? 'Business Account' : user.role)}</div>
                             </div>
                         </div>
                     ) : (
