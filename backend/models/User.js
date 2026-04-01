@@ -58,8 +58,18 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
-        resetPasswordToken: String,
-        resetPasswordExpire: Date,
+        emailVerificationToken: String,
+        emailVerificationExpire: Date,
+        sellerProfile: {
+            businessName: String,
+            businessType: String,
+            category: String,
+            websiteLink: String,
+        },
+        resetPasswordOTP: String,
+        resetPasswordOTPExpire: Date,
+        loginOTP: String,
+        loginOTPExpire: Date,
     },
     {
         timestamps: true,
@@ -87,6 +97,60 @@ UserSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE,
     });
+};
+
+// ── Generate and hash email verification token ──
+UserSchema.methods.getEmailVerificationToken = function () {
+    const crypto = require('crypto');
+    // Generate token
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    // Hash token and set to emailVerificationToken field
+    this.emailVerificationToken = crypto
+        .createHash('sha256')
+        .update(verificationToken)
+        .digest('hex');
+
+    // Set expire (e.g. 10 minutes)
+    this.emailVerificationExpire = Date.now() + 10 * 60 * 1000;
+
+    return verificationToken;
+};
+
+// ── Generate Reset Password OTP ──
+UserSchema.methods.getResetPasswordOTP = function () {
+    const crypto = require('crypto');
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Hash it and set to resetPasswordOTP field
+    this.resetPasswordOTP = crypto
+        .createHash('sha256')
+        .update(otp)
+        .digest('hex');
+
+    // Set expire (e.g. 10 minutes)
+    this.resetPasswordOTPExpire = Date.now() + 10 * 60 * 1000;
+
+    return otp; // Return unhashed OTP to send via email
+};
+
+// ── Generate Login OTP ──
+UserSchema.methods.getLoginOTP = function () {
+    const crypto = require('crypto');
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Hash it and set to loginOTP field
+    this.loginOTP = crypto
+        .createHash('sha256')
+        .update(otp)
+        .digest('hex');
+
+    // Set expire (e.g. 10 minutes)
+    this.loginOTPExpire = Date.now() + 10 * 60 * 1000;
+
+    return otp; // Return unhashed OTP to send via email
 };
 
 module.exports = mongoose.model('User', UserSchema);

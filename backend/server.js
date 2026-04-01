@@ -29,7 +29,7 @@ app.use(helmet());
 // CORS
 app.use(
     cors({
-        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: '*', // Allow all during troubleshooting
         credentials: true,
     })
 );
@@ -46,6 +46,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/deals', require('./routes/dealRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/support', require('./routes/supportRoutes'));
 
 // ── Health check ──
 app.get('/api/health', (req, res) => {

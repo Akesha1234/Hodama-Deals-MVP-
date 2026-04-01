@@ -34,6 +34,10 @@ const registerRules = [
     body('role')
         .optional()
         .isIn(['customer', 'seller']).withMessage('Invalid role'),
+    body('sellerProfile.businessName').optional().trim(),
+    body('sellerProfile.businessType').optional().trim(),
+    body('sellerProfile.category').optional().trim(),
+    body('sellerProfile.websiteLink').optional({ checkFalsy: true }).trim().isURL().withMessage('Website link must be a valid URL'),
 ];
 
 const loginRules = [
